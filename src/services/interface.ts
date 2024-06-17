@@ -41,3 +41,12 @@ export interface Products {
   racketsShoes: RacketShoes[];
   clothes: Clothes[];
 }
+
+export interface News {
+  id: string;
+  title: string;
+  date: string;
+  description: string;
+  image_url: string;
+  link_url: string;
+}
