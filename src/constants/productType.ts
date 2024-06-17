@@ -1,27 +1,24 @@
-export type ProductType = {
-  type: string;
-  label: string;
-};
+export type ProductType = "racket" | "shoes" | "shirt" | "pants" | "dress";
 
-export const productTypes = [
+export const productTypeLists: { type: ProductType; label: string }[] = [
   {
-    type: "vot",
+    type: "racket",
     label: "Vợt cầu lông",
   },
   {
-    type: "giay",
+    type: "shoes",
     label: "Giày cầu lông",
   },
   {
-    type: "ao",
+    type: "shirt",
     label: "Áo cầu lông",
   },
   {
-    type: "quan",
+    type: "pants",
     label: "Quần cầu lông",
   },
   {
-    type: "vay",
+    type: "dress",
     label: "Váy cầu lông",
   },
 ];
