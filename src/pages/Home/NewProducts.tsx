@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 
 import ContentContainer from "@/components/layouts/ContentContainer";
 import HomeTitle from "@/components/titles/HomeTitle";
 import { ProductType, productTypeLists } from "@/constants/productType";
 import { getClothes, getRacketsAndShoes } from "@/services/productsAction";
-import { Products } from "@/services/interface";
-import { initialProducts } from "@/services/initialState";
+import { Product, Products } from "@/services/interface";
+import { initialProduct, initialProducts } from "@/services/initialState";
 import HomeProductsCarousel from "@/components/carousels/HomeProductsCarousel";
 import ComponentSpinner from "@/components/loading/ComponentSpinner";
+import DetailProductModal from "@/components/modals/DetailProductModal";
+import { ModalRef } from "@/components/modals/Modal";
 
 const NEW_PRODUCT_ITEMS: { type: ProductType | "all"; label: string }[] = [
   {
@@ -22,6 +24,10 @@ export default function NewProducts() {
   const [selectedType, setSelectedType] = useState<ProductType | "all">("all");
   const [newProducts, setNewProducts] = useState<Products>(initialProducts);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] =
+    useState<Product>(initialProduct);
+
+  const detailProductModalRef = useRef<ModalRef>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -95,38 +101,50 @@ export default function NewProducts() {
   }, [selectedType]);
 
   return (
-    <ContentContainer>
-      <HomeTitle title="NEW ARRIVALS" />
+    <>
+      <ContentContainer>
+        <HomeTitle title="NEW ARRIVALS" />
 
-      <div className="border rounded">
-        <div className="flex divide-x overflow-x-scroll scrollbar-hide">
-          {NEW_PRODUCT_ITEMS.map(({ type, label }) => {
-            const isSelected = selectedType === type;
-            return (
-              <button
-                key={type}
-                type="button"
-                className={clsx(
-                  "shrink-0 w-[200px] py-1 m-2 rounded text-xl font-semibold",
-                  {
-                    "bg-pink text-white": isSelected,
-                    "text-white-dark-yellow": !isSelected,
-                  }
-                )}
-                onClick={() => setSelectedType(type)}
-              >
-                {label}
-              </button>
-            );
-          })}
+        <div className="border rounded">
+          <div className="flex divide-x overflow-x-scroll scrollbar-hide">
+            {NEW_PRODUCT_ITEMS.map(({ type, label }) => {
+              const isSelected = selectedType === type;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  className={clsx(
+                    "shrink-0 w-[200px] py-1 m-2 rounded text-xl font-semibold",
+                    {
+                      "bg-pink text-white": isSelected,
+                      "text-white-dark-yellow": !isSelected,
+                    }
+                  )}
+                  onClick={() => setSelectedType(type)}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+
+          <ComponentSpinner isLoading={loading}>
+            <HomeProductsCarousel
+              products={[...newProducts.racketsShoes, ...newProducts.clothes]}
+              onSelectProduct={(product) => {
+                setSelectedProduct(product);
+                detailProductModalRef.current?.open();
+              }}
+            />
+          </ComponentSpinner>
         </div>
+      </ContentContainer>
 
-        <ComponentSpinner isLoading={loading}>
-          <HomeProductsCarousel
-            products={[...newProducts.racketsShoes, ...newProducts.clothes]}
-          />
-        </ComponentSpinner>
-      </div>
-    </ContentContainer>
+      <DetailProductModal
+        detailProductModalRef={detailProductModalRef}
+        selectedProduct={selectedProduct}
+        closeModal={() => detailProductModalRef.current?.close()}
+      />
+    </>
   );
 }

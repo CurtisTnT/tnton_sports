@@ -24,3 +24,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.hide-up-down-input {
+  /* General appearance for Firefox */
+  -moz-appearance: textfield;
+
+  /* Hide the spinners in WebKit browsers */
+  -webkit-appearance: none;
+}
+
+/* Hide the spinners in WebKit browsers */
+.hide-up-down-input::-webkit-inner-spin-button,
+.hide-up-down-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

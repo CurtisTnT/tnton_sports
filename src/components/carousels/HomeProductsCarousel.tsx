@@ -4,21 +4,22 @@ import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { formatVndCurrency } from "@/utils/helpers";
-import { RacketShoes } from "@/services/interface";
+import { Clothes, Product, RacketShoes } from "@/services/interface";
 import ProductDetailOverlay from "@/components/ProductDetailOverlay";
 
 type Props = {
-  products: Pick<RacketShoes, "name" | "image_url" | "price">[];
+  products: (RacketShoes | Clothes)[];
+  onSelectProduct: (product: Product) => void;
 };
 
 export default function HomeProductsCarousel(props: Props) {
-  const { products } = props;
+  const { products, onSelectProduct } = props;
   const [curIndex, setCurIndex] = useState<number>();
 
   const swiperRef = useRef<SwiperRef>(null);
 
   return (
-    <div className="relative bg-white-yellow group overflow-hidden">
+    <div className="relative bg-white-yellow group overflow-hidden min-h-[362px]">
       <button
         onClick={() => swiperRef.current?.swiper.slidePrev()}
         className={clsx(
@@ -37,24 +38,29 @@ export default function HomeProductsCarousel(props: Props) {
         onSlideChange={(swiper) => setCurIndex(swiper.activeIndex)}
         onInit={(swiper) => setCurIndex(swiper.activeIndex)}
       >
-        {products.map(({ name, image_url, price }) => (
-          <SwiperSlide
-            key={name}
-            className="relative flex flex-col my-6 bg-white h-full py-3 px-0.5 shadow-[0px_0px_10px_1px_rgb(0,0,0,0.3)] rounded overflow-hidden"
-          >
-            <img
-              src={image_url[0]}
-              alt="product-image"
-              height={210}
-              className="h-[210px] my-2 text"
-            />
-            <p className="text-sm px-3 ellipsis-2-lines">{name}</p>
-            <p className="px-3 text-pink font-bold">
-              {formatVndCurrency(price)}
-            </p>
-            <ProductDetailOverlay />
-          </SwiperSlide>
-        ))}
+        {products.map((product) => {
+          const { name, image_url, price } = product;
+          return (
+            <SwiperSlide
+              key={name}
+              className="relative flex flex-col my-6 bg-white h-full py-3 px-0.5 shadow-[0px_0px_10px_1px_rgb(0,0,0,0.3)] rounded overflow-hidden"
+            >
+              <img
+                src={image_url[0]}
+                alt="product-image"
+                height={210}
+                className="h-[210px] my-2 text"
+              />
+              <p className="text-sm px-3 ellipsis-2-lines">{name}</p>
+              <p className="px-3 text-pink font-bold">
+                {formatVndCurrency(price)}
+              </p>
+              <ProductDetailOverlay
+                onSeeDetailProduct={() => onSelectProduct(product)}
+              />
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
 
       <button

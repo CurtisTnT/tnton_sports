@@ -1,4 +1,4 @@
-import { Clothes, Products, RacketShoes } from "./interface";
+import { Clothes, Product, Products, RacketShoes } from "./interface";
 
 export const initialRacketShoes: RacketShoes = {
   id: 0,
@@ -10,7 +10,7 @@ export const initialRacketShoes: RacketShoes = {
   discount_percent: 0,
   stores: [],
   price_level: "",
-  brand: "",
+  brand: null,
   shoes_size: [],
   subject: "",
   hight_light: "",
@@ -21,7 +21,7 @@ export const initialRacketShoes: RacketShoes = {
   weight: "",
   balance: "",
   stiffness: "",
-  product_type: "",
+  product_type: null,
 };
 
 export const initialClothes: Clothes = {
@@ -33,13 +33,38 @@ export const initialClothes: Clothes = {
   isNew: false,
   discount_percent: 0,
   stores: [],
-  brand: "",
+  brand: null,
   clothes_sizes: [],
   subject: "",
-  product_type: "",
+  product_type: null,
 };
 
 export const initialProducts: Products = {
   racketsShoes: [],
   clothes: [],
+};
+
+export const initialProduct: Product = {
+  id: 0,
+  name: "",
+  image_url: [],
+  price: 0,
+  init_price: 0,
+  isNew: false,
+  discount_percent: 0,
+  stores: [],
+  price_level: "",
+  brand: null,
+  shoes_size: [],
+  subject: "",
+  hight_light: "",
+  shoes_form: "",
+  racket_length: "",
+  grip_length: "",
+  swing_weight: "",
+  weight: "",
+  balance: "",
+  stiffness: "",
+  product_type: null,
+  clothes_sizes: [],
 };

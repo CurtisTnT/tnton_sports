@@ -31,7 +31,7 @@ export default function SaleOff() {
 
       <div className="grid grid-cols-3 gap-4">
         {SALE_OFF_ITEMS.map(({ id, imageUrl, to }) => (
-          <Link key={id} to={to} className="col-span-1 rounded overflow-hidden">
+          <Link key={id} to={to} className="col-span-1 rounded overflow-hidden hover:scale-105 duration-300">
             <img
               src={imageUrl}
               alt="sale-off"

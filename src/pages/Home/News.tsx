@@ -10,7 +10,7 @@ export default function News() {
 
       <div className="grid grid-cols-4">
         {NEWS.slice(0, 4).map((news) => (
-          <NewsCard {...news} />
+          <NewsCard key={news.id} {...news} />
         ))}
       </div>
     </ContentContainer>

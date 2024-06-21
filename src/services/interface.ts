@@ -1,3 +1,7 @@
+import { BrandType } from "@/constants/brand";
+import { ClothesSizeType } from "@/constants/clothesSize";
+import { ProductType } from "@/constants/productType";
+
 export interface RacketShoes {
   id: number;
   name: string;
@@ -8,9 +12,9 @@ export interface RacketShoes {
   discount_percent: number;
   stores: string[];
   price_level: string;
-  brand: string;
-  shoes_size: string[];
+  brand: BrandType | null;
   subject: string;
+  shoes_size: string[];
   hight_light: string;
   shoes_form: string;
   racket_length: string;
@@ -19,7 +23,7 @@ export interface RacketShoes {
   weight: string;
   balance: string;
   stiffness: string;
-  product_type: string;
+  product_type: "racket" | "shoes" | null;
 }
 
 export interface Clothes {
@@ -31,16 +35,31 @@ export interface Clothes {
   isNew: boolean;
   discount_percent: number;
   stores: string[];
-  brand: string;
-  clothes_sizes: string[];
+  brand: BrandType | null;
+  clothes_sizes: ClothesSizeType[];
   subject: string;
-  product_type: string;
+  product_type: "shirt" | "pants" | "dress" | null;
 }
 
 export interface Products {
   racketsShoes: RacketShoes[];
   clothes: Clothes[];
 }
+
+export type Product = Omit<Clothes, "clothes_sizes" | "product_type"> & {
+  clothes_sizes?: ClothesSizeType[];
+  shoes_size?: string[];
+  hight_light?: string;
+  shoes_form?: string;
+  racket_length?: string;
+  grip_length?: string;
+  swing_weight?: string;
+  weight?: string;
+  balance?: string;
+  stiffness?: string;
+  price_level?: string;
+  product_type: ProductType | null;
+};
 
 export interface News {
   id: string;

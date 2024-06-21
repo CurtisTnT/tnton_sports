@@ -3,7 +3,12 @@ import { LuEye } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa";
 import { BsCartPlus } from "react-icons/bs";
 
-export default function ProductDetailOverlay() {
+type Props = {
+  onSeeDetailProduct: () => void;
+};
+
+export default function ProductDetailOverlay(props: Props) {
+  const { onSeeDetailProduct } = props;
   return (
     <div className="absolute flex justify-center items-center inset-0 bg-black/60 opacity-0 hover:opacity-100">
       <div className="flex items-center gap-1">
@@ -11,7 +16,7 @@ export default function ProductDetailOverlay() {
           <FiExternalLink size={20} className="text-white hover:text-pink" />
         </button>
 
-        <button type="button">
+        <button type="button" onClick={onSeeDetailProduct}>
           <LuEye size={20} className="text-white hover:text-pink" />
         </button>
 

@@ -8,7 +8,7 @@ import News from "./News.tsx";
 
 export default function Home() {
   return (
-    <div className="">
+    <div>
       <VideoIntro />
       <IntroCarousel />
       <Criteria />
