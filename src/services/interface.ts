@@ -10,6 +10,7 @@ export interface RacketShoes {
   init_price: number;
   isNew: boolean;
   discount_percent: number;
+  is_discount: boolean;
   stores: string[];
   price_level: string;
   brand: BrandType | null;
@@ -34,6 +35,7 @@ export interface Clothes {
   init_price: number;
   isNew: boolean;
   discount_percent: number;
+  is_discount: boolean;
   stores: string[];
   brand: BrandType | null;
   clothes_sizes: ClothesSizeType[];
@@ -68,4 +70,33 @@ export interface News {
   description: string;
   image_url: string;
   link_url: string;
+}
+
+export interface ProductParams {
+  page?: number;
+  limit?: number;
+  name?: string;
+  image_url?: string;
+  price?: string;
+  init_price?: string;
+  isNew?: boolean;
+  discount_percent?: string;
+  is_discount?: boolean;
+  stores?: string;
+  price_level?: string;
+  brand?: string;
+  shoes_size?: string;
+  subject?: string;
+  hight_light?: string;
+  shoes_form?: string;
+  racket_length?: string;
+  grip_length?: string;
+  swing_weight?: string;
+  weight?: string;
+  balance?: string;
+  stiffness?: string;
+  product_type?: string;
+  clothes_sizes?: string;
+  sortBy?: string;
+  order?: "asc" | "desc";
 }

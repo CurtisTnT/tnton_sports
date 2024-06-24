@@ -57,6 +57,7 @@ export default function HomeProductsCarousel(props: Props) {
               </p>
               <ProductDetailOverlay
                 onSeeDetailProduct={() => onSelectProduct(product)}
+                onAddProductInFavorite={() => {}}
               />
             </SwiperSlide>
           );

@@ -117,7 +117,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="sticky top-0 z-20 bg-white shadow-lg">
+      <div className="sticky top-0 z-40 bg-white shadow-lg">
         <div className="grid grid-cols-12 pt-2 px-4">
           <Link
             ref={appIconRef}
@@ -143,8 +143,8 @@ export default function Header() {
                 //   dropdownRef.current?.classList.remove("!h-auto")
                 // }
               >
-                <button
-                  type="button"
+                <Link
+                  to="/sale-off"
                   className="relative text-white-dark-yellow hover:text-pink font-semibold group"
                 >
                   <div className="flex items-center gap-1">
@@ -154,7 +154,7 @@ export default function Header() {
                       className="-rotate-180 group-hover:rotate-0 duration-300"
                     />
                   </div>
-                </button>
+                </Link>
               </li>
 
               <li className="col-span-1">

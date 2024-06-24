@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 import ContentContainer from "@/components/layouts/ContentContainer";
 import HomeTitle from "@/components/titles/HomeTitle";
-import { ProductType, productTypeLists } from "@/constants/productType";
+import { ProductTypeType, productTypes } from "@/constants/productType";
 import { getClothes, getRacketsAndShoes } from "@/services/productsAction";
 import { Product, Products } from "@/services/interface";
 import { initialProduct, initialProducts } from "@/services/initialState";
@@ -12,16 +12,18 @@ import ComponentSpinner from "@/components/loading/ComponentSpinner";
 import DetailProductModal from "@/components/modals/DetailProductModal";
 import { ModalRef } from "@/components/modals/Modal";
 
-const NEW_PRODUCT_ITEMS: { type: ProductType | "all"; label: string }[] = [
+const NEW_PRODUCT_ITEMS: { type: ProductTypeType | "all"; label: string }[] = [
   {
     type: "all",
     label: "Tất cả",
   },
-  ...productTypeLists,
+  ...productTypes,
 ];
 
 export default function NewProducts() {
-  const [selectedType, setSelectedType] = useState<ProductType | "all">("all");
+  const [selectedType, setSelectedType] = useState<ProductTypeType | "all">(
+    "all"
+  );
   const [newProducts, setNewProducts] = useState<Products>(initialProducts);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] =
