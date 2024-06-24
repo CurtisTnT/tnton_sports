@@ -76,7 +76,6 @@ const PRODUCT_NAV_ITEMS = [
 export default function Header() {
   const divRef = useRef<HTMLDivElement>(null);
   const appIconRef = useRef<HTMLAnchorElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkDivRef = () => {
@@ -118,7 +117,7 @@ export default function Header() {
       </div>
 
       <div className="sticky top-0 z-40 bg-white shadow-lg">
-        <div className="grid grid-cols-12 pt-2 px-4">
+        <div className="grid grid-cols-12 py-2">
           <Link
             ref={appIconRef}
             to="/"
@@ -132,20 +131,12 @@ export default function Header() {
             />
           </Link>
 
-          <div className="col-span-6 content-center">
-            <ul className="grid grid-cols-4 justify-items-center">
-              <li
-                className="col-span-1"
-                // onMouseOver={() =>
-                //   dropdownRef.current?.classList.add("!h-auto")
-                // }
-                // onMouseOut={() =>
-                //   dropdownRef.current?.classList.remove("!h-auto")
-                // }
-              >
+          <div className="col-span-6">
+            <ul className="grid grid-cols-4 justify-items-center h-full">
+              <li className="relative w-full col-span-1 flex flex-col justify-center items-center group">
                 <Link
                   to="/sale-off"
-                  className="relative text-white-dark-yellow hover:text-pink font-semibold group"
+                  className="text-white-dark-yellow hover:text-pink font-semibold"
                 >
                   <div className="flex items-center gap-1">
                     <p>Sản phẩm</p>
@@ -155,18 +146,68 @@ export default function Header() {
                     />
                   </div>
                 </Link>
+
+                <div className="absolute self-start top-[54px] w-screen -translate-x-1/4 bg-white p-5 shadow-[0px_0px_10px_1px] shadow-pink/40 hidden group-hover:block">
+                  <div className="grid grid-cols-5 gap-4">
+                    {PRODUCT_NAV_ITEMS.map(
+                      ({ id, label, producType, items }) => (
+                        <div key={id} className="col-span-1 flex flex-col">
+                          <Link
+                            to={producType}
+                            className="border-b border-pink text-pink font-semibold uppercase"
+                          >
+                            {label}
+                          </Link>
+
+                          <div className="flex flex-col items-start pt-4">
+                            {items.map(({ id, brand, label }) => (
+                              <Link
+                                key={id}
+                                to={brand}
+                                className="text-sm hover:text-pink"
+                              >
+                                {label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
               </li>
 
-              <li className="col-span-1">
+              <li className="w-full col-span-1 flex flex-col justify-center items-center group">
                 <Link
                   to="/sale-off"
                   className="text-white-dark-yellow hover:text-pink font-semibold"
                 >
-                  Sale off
+                  <div className="flex items-center gap-1">
+                    <p>Sale off</p>
+                    <FaAngleDown
+                      size={15}
+                      className="-rotate-180 group-hover:rotate-0 duration-300"
+                    />
+                  </div>
                 </Link>
+
+                <div className="absolute top-[54px] flex-col items-start py-1 bg-white shadow-[0px_0px_10px_1px] shadow-pink/40 hidden group-hover:flex rounded text-sm">
+                  <Link
+                    to="/sale-off/rackets-shoes"
+                    className="py-0.5 px-4 hover:text-pink"
+                  >
+                    Vợt, giày cầu lông
+                  </Link>
+                  <Link
+                    to="/sale-off/clothes"
+                    className="py-0.5 px-4 hover:text-pink"
+                  >
+                    Áo, quần, váy cầu lông
+                  </Link>
+                </div>
               </li>
 
-              <li className="col-span-1">
+              <li className="w-full col-span-1 flex flex-col justify-center items-center">
                 <Link
                   to="/news"
                   className="text-white-dark-yellow hover:text-pink font-semibold"
@@ -175,7 +216,7 @@ export default function Header() {
                 </Link>
               </li>
 
-              <li className="col-span-1">
+              <li className="w-full col-span-1 flex flex-col justify-center items-center">
                 <Link
                   to="/contact"
                   className="text-white-dark-yellow hover:text-pink font-semibold"
@@ -195,7 +236,7 @@ export default function Header() {
               <span>Tìm kiếm</span>
             </button>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 px-4">
               <Link
                 to="/favorite"
                 className="relative p-2 border rounded-3xl hover:text-pink"
@@ -225,29 +266,6 @@ export default function Header() {
             </div>
           </div>
         </div>
-
-        {/* <div className="bg-white" ref={dropdownRef}>
-          <div className="p-5 grid grid-cols-5 gap-4">
-            {PRODUCT_NAV_ITEMS.map(({ id, label, producType, items }) => (
-              <div key={id} className="col-span-1 flex flex-col">
-                <Link
-                  to={producType}
-                  className="border-b border-pink text-pink font-semibold uppercase"
-                >
-                  {label}
-                </Link>
-
-                <div className="flex flex-col items-start pt-4">
-                  {items.map(({ id, brand, label }) => (
-                    <Link key={id} to={brand} className="text-sm hover:text-pink">
-                      {label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div> */}
       </div>
     </>
   );

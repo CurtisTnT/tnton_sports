@@ -5,8 +5,8 @@ import "swiper/css/navigation";
 import "./App.css";
 import Home from "./pages/Home";
 import Header from "./components/layouts/Header";
-import RacketsShoes from "./pages/SaleOff/RacketsShoes";
-import Clothes from "./pages/SaleOff/Clothes";
+import SaleRacketsShoes from "./pages/SaleOff/SaleRacketsShoes";
+import SaleClothes from "./pages/SaleOff/SaleClothes";
 import StoreProvider from "./context/StoreProvider";
 
 function App() {
@@ -21,8 +21,8 @@ function App() {
               path=""
               element={<Navigate to="/sale-off/rackets-shoes" />}
             />
-            <Route path="rackets-shoes" element={<RacketsShoes />} />
-            <Route path="clothes" element={<Clothes />} />
+            <Route path="rackets-shoes" element={<SaleRacketsShoes />} />
+            <Route path="clothes" element={<SaleClothes />} />
           </Route>
           <Route path="*" element={<h1>404 Page not found!</h1>} />
         </Routes>

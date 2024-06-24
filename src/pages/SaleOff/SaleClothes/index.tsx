@@ -1,30 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 
-import SideBarFilter from "@/components/SideBarFilter";
 import ContentContainer from "@/components/layouts/ContentContainer";
+import { Brand, BrandType, brands } from "@/constants/brand";
 import {
-  PriceLevel,
-  PriceLevelType,
-  priceLevels,
-} from "@/constants/priceLevel";
-import { Store, StoreType, stores } from "@/constants/store";
-import { Product, ProductParams, RacketShoes } from "@/services/interface";
-import { getRacketsAndShoes } from "@/services/productsAction";
-import ComponentSpinner from "@/components/loading/ComponentSpinner";
-import SaleProductCard from "@/components/cards/SaleProductCard";
+  ClothesSize,
+  ClothesSizeType,
+  clothesSizes,
+} from "@/constants/clothesSize";
 import {
   ProductType,
   ProductTypeType,
   productTypes,
 } from "@/constants/productType";
-import PaginationComponent from "@/components/PaginationComponent";
-import { Brand, BrandType, brands } from "@/constants/brand";
-import TitleAndSorting from "@/components/TitleAndSorting";
-import SelectedFilters from "@/components/SelectedFilters";
+import { Store, StoreType, stores } from "@/constants/store";
+import { Clothes, Product, ProductParams } from "@/services/interface";
+import { getClothes } from "@/services/productsAction";
 import { IoClose } from "react-icons/io5";
-import DetailProductModal from "@/components/modals/DetailProductModal";
-import { ModalRef } from "@/components/modals/Modal";
+import SelectedFilters from "@/components/SelectedFilters";
+import SideBarFilter from "@/components/SideBarFilter";
+import TitleAndSorting from "@/components/TitleAndSorting";
+import ComponentSpinner from "@/components/loading/ComponentSpinner";
+import SaleProductCard from "@/components/cards/SaleProductCard";
 import { initialProduct } from "@/services/initialState";
+import { ModalRef } from "@/components/modals/Modal";
+import PaginationComponent from "@/components/PaginationComponent";
+import DetailProductModal from "@/components/modals/DetailProductModal";
 
 type Filters = {
   page: number;
@@ -32,22 +32,22 @@ type Filters = {
   is_discount: true;
   product_type: ProductTypeType[];
   brand: BrandType[];
-  price_level: PriceLevelType[];
+  clothes_sizes: ClothesSizeType[];
   stores: StoreType[];
 } & Pick<ProductParams, "sortBy" | "order">;
 
-export default function RacketsShoes() {
+export default function SaleClothes() {
   const [filters, setFilters] = useState<Filters>({
     page: 1,
     limit: 9,
     is_discount: true,
     product_type: [],
     brand: [],
-    price_level: [],
+    clothes_sizes: [],
     stores: [],
   });
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<RacketShoes[]>([]);
+  const [products, setProducts] = useState<Clothes[]>([]);
   const [selectedProduct, setSelectedProduct] =
     useState<Product>(initialProduct);
 
@@ -60,12 +60,12 @@ export default function RacketsShoes() {
       : { ...filters, ...values, page: 1 };
     setFilters(newFilters);
 
-    const res = await getRacketsAndShoes({
+    const res = await getClothes({
       ...newFilters,
       product_type: newFilters.product_type.join("|"),
       brand: newFilters.brand.join("|"),
+      clothes_sizes: newFilters.clothes_sizes.join("|"),
       stores: newFilters.stores.join("|"),
-      price_level: newFilters.price_level.join("|"),
     });
 
     if (res) {
@@ -76,12 +76,12 @@ export default function RacketsShoes() {
 
   useEffect(() => {
     (async () => {
-      const res = await getRacketsAndShoes({
+      const res = await getClothes({
         ...filters,
         product_type: "",
         brand: "",
+        clothes_sizes: "",
         stores: "",
-        price_level: "",
       });
 
       if (res) {
@@ -100,7 +100,7 @@ export default function RacketsShoes() {
             {(!!filters.product_type.length ||
               !!filters.brand.length ||
               !!filters.stores.length ||
-              !!filters.price_level.length) && (
+              !!filters.clothes_sizes.length) && (
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-black-light">
                   <p className="font-semibold">Bạn chọn</p>
@@ -111,7 +111,7 @@ export default function RacketsShoes() {
                         product_type: [],
                         brand: [],
                         stores: [],
-                        price_level: [],
+                        clothes_sizes: [],
                       })
                     }
                     className="flex items-center gap-1 py-0.5 px-2 text-sm font-semibold hover:text-pink"
@@ -140,6 +140,15 @@ export default function RacketsShoes() {
                   }
                 />
                 <SelectedFilters
+                  selectedItems={filters.clothes_sizes}
+                  object={ClothesSize}
+                  onDeleteItem={(newValues) =>
+                    handleFilters({
+                      clothes_sizes: newValues as ClothesSizeType[],
+                    })
+                  }
+                />
+                <SelectedFilters
                   selectedItems={filters.stores}
                   object={Store}
                   onDeleteItem={(newValues) =>
@@ -148,21 +157,12 @@ export default function RacketsShoes() {
                     })
                   }
                 />
-                <SelectedFilters
-                  selectedItems={filters.price_level}
-                  object={PriceLevel}
-                  onDeleteItem={(newValues) =>
-                    handleFilters({
-                      price_level: newValues as PriceLevelType[],
-                    })
-                  }
-                />
               </div>
             )}
 
             <SideBarFilter
               label="Vợt, giày"
-              filterItems={productTypes.slice(0, 2)}
+              filterItems={productTypes.slice(2)}
               selectedItems={filters.product_type}
               onCheckItem={(items) =>
                 handleFilters({ product_type: items as ProductTypeType[] })
@@ -177,11 +177,11 @@ export default function RacketsShoes() {
               }
             />
             <SideBarFilter
-              label="Chọn mức giá"
-              filterItems={priceLevels}
-              selectedItems={filters.price_level}
+              label="Size"
+              filterItems={clothesSizes}
+              selectedItems={filters.clothes_sizes}
               onCheckItem={(items) =>
-                handleFilters({ price_level: items as PriceLevelType[] })
+                handleFilters({ clothes_sizes: items as ClothesSizeType[] })
               }
             />
             <SideBarFilter

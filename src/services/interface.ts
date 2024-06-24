@@ -1,6 +1,6 @@
 import { BrandType } from "@/constants/brand";
 import { ClothesSizeType } from "@/constants/clothesSize";
-import { ProductType } from "@/constants/productType";
+import { ProductTypeType } from "@/constants/productType";
 
 export interface RacketShoes {
   id: number;
@@ -60,7 +60,7 @@ export type Product = Omit<Clothes, "clothes_sizes" | "product_type"> & {
   balance?: string;
   stiffness?: string;
   price_level?: string;
-  product_type: ProductType | null;
+  product_type: ProductTypeType | null;
 };
 
 export interface News {

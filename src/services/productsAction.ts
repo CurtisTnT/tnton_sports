@@ -15,13 +15,14 @@ export const getRacketsAndShoes = async (
 };
 
 export const getClothes = async (
-  params?: Partial<Clothes> & { page?: number; limit?: number }
-): Promise<Clothes[] | undefined> => {
+  params?: ProductParams
+): Promise<Clothes[]> => {
   try {
     const res = await apiClient.get("/clothes", { params });
 
     return res.data;
   } catch (error: any) {
     console.log(new Error(error));
+    return [];
   }
 };

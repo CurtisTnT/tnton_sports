@@ -17,7 +17,7 @@ type Sort = {
 
 const SORT_ITEMS: Sort[] = [
   { id: 1, sortField: "name", order: "asc", label: "A → Z" },
-  { id: 2, sortField: "name", order: "desc", label: "A → Z" },
+  { id: 2, sortField: "name", order: "desc", label: "Z → A" },
   { id: 3, sortField: "price", order: "asc", label: "Giá tăng dần" },
   { id: 4, sortField: "price", order: "desc", label: "Giá giảm dần" },
 ];
