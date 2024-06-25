@@ -56,8 +56,8 @@ export default function HomeProductsCarousel(props: Props) {
                 {formatVndCurrency(price)}
               </p>
               <ProductDetailOverlay
+                product={product}
                 onSeeDetailProduct={() => onSelectProduct(product)}
-                onAddProductInFavorite={() => {}}
               />
             </SwiperSlide>
           );

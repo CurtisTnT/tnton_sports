@@ -3,7 +3,6 @@ import { MdLabel } from "react-icons/md";
 import ProductDetailOverlay from "@/components/ProductDetailOverlay";
 import { Product } from "@/services/interface";
 import { formatVndCurrency } from "@/utils/helpers";
-import { useStore } from "@/context/Store";
 
 type Props = {
   product: Product;
@@ -13,7 +12,6 @@ type Props = {
 export default function ProductCard(props: Props) {
   const { product, onSelectProduct } = props;
   const { name, image_url, price, init_price, discount_percent } = product;
-  const setAppState = useStore()[1];
 
   return (
     <div className="relative col-span-1 flex flex-col rounded overflow-hidden">
@@ -45,13 +43,14 @@ export default function ProductCard(props: Props) {
       </div>
 
       <ProductDetailOverlay
+        product={product}
         onSeeDetailProduct={onSelectProduct}
-        onAddProductInFavorite={() => {
-          setAppState((prev) => ({
-            ...prev,
-            favoriteItems: [...prev.favoriteItems, product],
-          }));
-        }}
+        // onAddProductInFavorite={() => {
+        //   setAppState((prev) => ({
+        //     ...prev,
+        //     favoriteItems: [...prev.favoriteItems, product],
+        //   }));
+        // }}
       />
     </div>
   );

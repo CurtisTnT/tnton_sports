@@ -1,13 +1,14 @@
 import { Ref, useEffect, useState } from "react";
+import clsx from "clsx";
 import { IoClose } from "react-icons/io5";
 import { TfiClose } from "react-icons/tfi";
+import { MdLabel } from "react-icons/md";
 
 import Modal, { ModalRef } from "./Modal";
 import { Product } from "@/services/interface";
 import { Brand } from "@/constants/brand";
 import { formatVndCurrency } from "@/utils/helpers";
 import { clothesSizes } from "@/constants/clothesSize";
-import clsx from "clsx";
 import { shoesSizes } from "@/constants/shoesSize";
 
 type Props = {
@@ -28,6 +29,7 @@ export default function DetailProductModal(props: Props) {
     product_type,
     clothes_sizes,
     shoes_size,
+    discount_percent,
   } = selectedProduct;
 
   const [previewImg, setPreviewImg] = useState("");
@@ -54,8 +56,7 @@ export default function DetailProductModal(props: Props) {
         </button>
 
         <div className="flex gap-4">
-          {/* <div className="space-y-5"> */}
-          <div className="w-[350px] h-[350px] flex items-center rounded-xl shadow-[0px_0px_10px_1px_rgb(0,0,0,0.3)] shrink-0 overflow-hidden">
+          <div className="relative w-[350px] h-[350px] flex items-center rounded-xl shadow-[0px_0px_10px_1px_rgb(0,0,0,0.3)] shrink-0 overflow-hidden">
             <img
               src={previewImg}
               alt="preview-image"
@@ -63,8 +64,18 @@ export default function DetailProductModal(props: Props) {
               height={400}
               className="object-cover"
             />
+
+            {!!discount_percent && (
+              <div className="absolute top-0 right-0">
+                <div className="relative">
+                  <MdLabel size={45} className="rotate-180 text-red-600" />
+                  <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-white font-semibold">
+                    {discount_percent}%
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-          {/* </div> */}
 
           <div className="flex flex-col justify-between">
             <div className="space-y-2">
@@ -88,9 +99,11 @@ export default function DetailProductModal(props: Props) {
               <p className="text-2xl font-bold text-pink">
                 {formatVndCurrency(price)}{" "}
                 {!!init_price && (
-                  <span className="text-base text-gray-500">
+                  <span className="text-sm font-normal text-gray-400">
                     Giá niêm yết:{" "}
-                    <span className="line-through">{init_price}</span>
+                    <span className="line-through">
+                      {formatVndCurrency(init_price)}
+                    </span>
                   </span>
                 )}
               </p>
