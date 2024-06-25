@@ -14,13 +14,13 @@ export default function AllProducts() {
       id: 1,
       label: "Vợt cầu lông",
       imageUrl: racketImg,
-      to: "#",
+      to: "/products/rackets",
     },
     {
       id: 2,
       label: "Giày cầu lông",
       imageUrl: shoesImg,
-      to: "#",
+      to: "/products/shoes",
     },
     {
       id: 3,

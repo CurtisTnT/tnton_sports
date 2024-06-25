@@ -1,57 +1,77 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import ContentContainer from "@/components/layouts/ContentContainer";
 import { Brand, BrandType, brands } from "@/constants/brand";
+import { HighLight, HighLightType, highLights } from "@/constants/hightLight";
 import {
-  ClothesSize,
-  ClothesSizeType,
-  clothesSizes,
-} from "@/constants/clothesSize";
-import {
-  ProductType,
-  ProductTypeType,
-  productTypes,
-} from "@/constants/productType";
+  PriceLevel,
+  PriceLevelType,
+  priceLevels,
+} from "@/constants/priceLevel";
+import { ShoesForm, ShoesFormType, shoesForms } from "@/constants/shoesForm";
+import { ShoesSize, ShoesSizeType, shoesSizes } from "@/constants/shoesSize";
 import { Store, StoreType, stores } from "@/constants/store";
-import { Clothes, Product, ProductParams } from "@/services/interface";
-import { getClothes } from "@/services/productsAction";
+import { Subject, SubjectType, subjects } from "@/constants/subject";
+import { Product, ProductParams, RacketShoes } from "@/services/interface";
+import { initialProduct } from "@/services/initialState";
+import { ModalRef } from "@/components/modals/Modal";
+import { getRacketsAndShoes } from "@/services/productsAction";
 import { IoClose } from "react-icons/io5";
 import SelectedFilters from "@/components/SelectedFilters";
 import SideBarFilter from "@/components/SideBarFilter";
 import TitleAndSorting from "@/components/TitleAndSorting";
 import ComponentSpinner from "@/components/loading/ComponentSpinner";
 import ProductCard from "@/components/cards/ProductCard";
-import { initialProduct } from "@/services/initialState";
-import { ModalRef } from "@/components/modals/Modal";
 import PaginationComponent from "@/components/PaginationComponent";
 import DetailProductModal from "@/components/modals/DetailProductModal";
 
 type Filters = {
   page: number;
   limit: number;
-  is_discount: true;
-  product_type: ProductTypeType[];
+  product_type: "shoes";
   brand: BrandType[];
-  clothes_sizes: ClothesSizeType[];
+  price_level: PriceLevelType[];
+  shoes_size: ShoesSizeType[];
+  subject: SubjectType[];
+  hight_light: HighLightType[];
+  shoes_form: ShoesFormType[];
   stores: StoreType[];
 } & Pick<ProductParams, "sortBy" | "order">;
 
-export default function SaleClothes() {
+export default function Shoes() {
+  const [searchParams] = useSearchParams();
+  const brandQuery = searchParams.get("brand");
+
   const [filters, setFilters] = useState<Filters>({
     page: 1,
     limit: 9,
-    is_discount: true,
-    product_type: [],
+    product_type: "shoes",
     brand: [],
-    clothes_sizes: [],
+    price_level: [],
+    shoes_size: [],
+    subject: [],
+    hight_light: [],
+    shoes_form: [],
     stores: [],
   });
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<Clothes[]>([]);
+  const [products, setProducts] = useState<RacketShoes[]>([]);
   const [selectedProduct, setSelectedProduct] =
     useState<Product>(initialProduct);
 
   const detailProductModalRef = useRef<ModalRef>(null);
+
+  const isShowSelectedItems =
+    !!filters.brand.length ||
+    !!filters.price_level.length ||
+    !!filters.brand.length ||
+    !!filters.price_level.length ||
+    !!filters.shoes_size.length ||
+    !!filters.subject.length ||
+    !!filters.hight_light.length ||
+    !!filters.shoes_form.length ||
+    !!filters.stores.length;
 
   const handleFilters = async (values: Partial<Filters>) => {
     setLoading(true);
@@ -60,11 +80,14 @@ export default function SaleClothes() {
       : { ...filters, ...values, page: 1 };
     setFilters(newFilters);
 
-    const res = await getClothes({
+    const res = await getRacketsAndShoes({
       ...newFilters,
-      product_type: newFilters.product_type.join("|"),
       brand: newFilters.brand.join("|"),
-      clothes_sizes: newFilters.clothes_sizes.join("|"),
+      price_level: newFilters.price_level.join("|"),
+      shoes_size: newFilters.shoes_size.join("|"),
+      subject: newFilters.subject.join("|"),
+      hight_light: newFilters.hight_light.join("|"),
+      shoes_form: newFilters.shoes_form.join("|"),
       stores: newFilters.stores.join("|"),
     });
 
@@ -76,11 +99,14 @@ export default function SaleClothes() {
 
   useEffect(() => {
     (async () => {
-      const res = await getClothes({
+      const res = await getRacketsAndShoes({
         ...filters,
-        product_type: "",
         brand: "",
-        clothes_sizes: "",
+        price_level: "",
+        shoes_size: "",
+        subject: "",
+        hight_light: "",
+        shoes_form: "",
         stores: "",
       });
 
@@ -92,15 +118,19 @@ export default function SaleClothes() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (brandQuery) {
+      handleFilters({ brand: [brandQuery as BrandType] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [brandQuery]);
+
   return (
     <ContentContainer>
       <div className="flex gap-10">
         <div>
           <nav className="w-[300px] p-5 space-y-5 bg-white border rounded-xl shrink-0">
-            {(!!filters.product_type.length ||
-              !!filters.brand.length ||
-              !!filters.stores.length ||
-              !!filters.clothes_sizes.length) && (
+            {isShowSelectedItems && (
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-black-light">
                   <p className="font-semibold">Bạn chọn</p>
@@ -108,10 +138,13 @@ export default function SaleClothes() {
                     type="button"
                     onClick={() =>
                       handleFilters({
-                        product_type: [],
                         brand: [],
+                        price_level: [],
+                        shoes_size: [],
+                        subject: [],
+                        hight_light: [],
+                        shoes_form: [],
                         stores: [],
-                        clothes_sizes: [],
                       })
                     }
                     className="flex items-center gap-1 py-0.5 px-2 text-sm font-semibold hover:text-pink"
@@ -122,15 +155,6 @@ export default function SaleClothes() {
                 </div>
 
                 <SelectedFilters
-                  selectedItems={filters.product_type}
-                  object={ProductType}
-                  onDeleteItem={(newValues) =>
-                    handleFilters({
-                      product_type: newValues as ProductTypeType[],
-                    })
-                  }
-                />
-                <SelectedFilters
                   selectedItems={filters.brand}
                   object={Brand}
                   onDeleteItem={(newValues) =>
@@ -140,11 +164,47 @@ export default function SaleClothes() {
                   }
                 />
                 <SelectedFilters
-                  selectedItems={filters.clothes_sizes}
-                  object={ClothesSize}
+                  selectedItems={filters.price_level}
+                  object={PriceLevel}
                   onDeleteItem={(newValues) =>
                     handleFilters({
-                      clothes_sizes: newValues as ClothesSizeType[],
+                      price_level: newValues as PriceLevelType[],
+                    })
+                  }
+                />
+                <SelectedFilters
+                  selectedItems={filters.shoes_size}
+                  object={ShoesSize}
+                  onDeleteItem={(newValues) =>
+                    handleFilters({
+                      shoes_size: newValues as ShoesSizeType[],
+                    })
+                  }
+                />
+                <SelectedFilters
+                  selectedItems={filters.subject}
+                  object={Subject}
+                  onDeleteItem={(newValues) =>
+                    handleFilters({
+                      subject: newValues as SubjectType[],
+                    })
+                  }
+                />
+                <SelectedFilters
+                  selectedItems={filters.hight_light}
+                  object={HighLight}
+                  onDeleteItem={(newValues) =>
+                    handleFilters({
+                      hight_light: newValues as HighLightType[],
+                    })
+                  }
+                />
+                <SelectedFilters
+                  selectedItems={filters.shoes_form}
+                  object={ShoesForm}
+                  onDeleteItem={(newValues) =>
+                    handleFilters({
+                      shoes_form: newValues as ShoesFormType[],
                     })
                   }
                 />
@@ -161,14 +221,6 @@ export default function SaleClothes() {
             )}
 
             <SideBarFilter
-              label="Vợt, giày"
-              filterItems={productTypes.slice(2)}
-              selectedItems={filters.product_type}
-              onCheckItem={(items) =>
-                handleFilters({ product_type: items as ProductTypeType[] })
-              }
-            />
-            <SideBarFilter
               label="Thương hiệu"
               filterItems={brands}
               selectedItems={filters.brand}
@@ -177,11 +229,43 @@ export default function SaleClothes() {
               }
             />
             <SideBarFilter
-              label="Size"
-              filterItems={clothesSizes}
-              selectedItems={filters.clothes_sizes}
+              label="Chọn mức giá"
+              filterItems={priceLevels}
+              selectedItems={filters.price_level}
               onCheckItem={(items) =>
-                handleFilters({ clothes_sizes: items as ClothesSizeType[] })
+                handleFilters({ price_level: items as PriceLevelType[] })
+              }
+            />
+            <SideBarFilter
+              label="Size"
+              filterItems={shoesSizes}
+              selectedItems={filters.shoes_size}
+              onCheckItem={(items) =>
+                handleFilters({ shoes_size: items as ShoesSizeType[] })
+              }
+            />
+            <SideBarFilter
+              label="Đối tượng"
+              filterItems={subjects}
+              selectedItems={filters.subject}
+              onCheckItem={(items) =>
+                handleFilters({ subject: items as SubjectType[] })
+              }
+            />
+            <SideBarFilter
+              label="Điểm nổi bật"
+              filterItems={highLights}
+              selectedItems={filters.hight_light}
+              onCheckItem={(items) =>
+                handleFilters({ hight_light: items as HighLightType[] })
+              }
+            />
+            <SideBarFilter
+              label="Form giày"
+              filterItems={shoesForms}
+              selectedItems={filters.shoes_form}
+              onCheckItem={(items) =>
+                handleFilters({ shoes_form: items as ShoesFormType[] })
               }
             />
             <SideBarFilter
@@ -197,7 +281,7 @@ export default function SaleClothes() {
 
         <main className="flex-grow space-y-4">
           <TitleAndSorting
-            title="Sản phẩm thanh lý"
+            title="Giày cầu lông"
             onSort={({ sortField, order }) =>
               handleFilters({ sortBy: sortField, order })
             }

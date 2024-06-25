@@ -1,31 +1,15 @@
-export type Weight = {
-  type: string;
-  name: string;
+export type WeightType = "2u" | "3u" | "4u" | "5u" | "f" | "2f";
+
+export const Weight: { [key in WeightType]: { label: string } } = {
+  "2u": { label: "2U: 90 - 94g" },
+  "3u": { label: "3U: 85 - 89g" },
+  "4u": { label: "4U: 80 - 84g" },
+  "5u": { label: "5U: 75 - 79g" },
+  f: { label: "F: 70 - 74g" },
+  "2f": { label: "2F: 65 - 69g" },
 };
 
-export const weights: Weight[] = [
-  {
-    type: "2u",
-    name: "2U: 90 - 94g",
-  },
-  {
-    type: "3u",
-    name: "3U: 85 - 89g",
-  },
-  {
-    type: "4u",
-    name: "4U: 80 - 84g",
-  },
-  {
-    type: "5u",
-    name: "5U: 75 - 79g",
-  },
-  {
-    type: "f",
-    name: "F: 70 - 74g",
-  },
-  {
-    type: "2f",
-    name: "2F: 65 - 69g",
-  },
-];
+export const weights = Object.keys(Weight).map((key) => ({
+  type: key as WeightType,
+  label: Weight[key as WeightType].label,
+}));

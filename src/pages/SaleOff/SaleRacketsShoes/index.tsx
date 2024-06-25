@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import SideBarFilter from "@/components/SideBarFilter";
 import ContentContainer from "@/components/layouts/ContentContainer";
@@ -11,7 +12,7 @@ import { Store, StoreType, stores } from "@/constants/store";
 import { Product, ProductParams, RacketShoes } from "@/services/interface";
 import { getRacketsAndShoes } from "@/services/productsAction";
 import ComponentSpinner from "@/components/loading/ComponentSpinner";
-import SaleProductCard from "@/components/cards/SaleProductCard";
+import ProductCard from "@/components/cards/ProductCard";
 import {
   ProductType,
   ProductTypeType,
@@ -37,6 +38,9 @@ type Filters = {
 } & Pick<ProductParams, "sortBy" | "order">;
 
 export default function RacketsShoes() {
+  const [searchParams] = useSearchParams();
+  const productTypeQuery = searchParams.get("product_type");
+
   const [filters, setFilters] = useState<Filters>({
     page: 1,
     limit: 9,
@@ -91,6 +95,13 @@ export default function RacketsShoes() {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (productTypeQuery) {
+      handleFilters({ product_type: [productTypeQuery as ProductTypeType] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productTypeQuery]);
 
   return (
     <ContentContainer>
@@ -207,7 +218,7 @@ export default function RacketsShoes() {
             {products.length ? (
               <div className="grid grid-cols-3 gap-x-2 gap-y-4">
                 {products.map((product) => (
-                  <SaleProductCard
+                  <ProductCard
                     key={product.id + product.product_type!}
                     product={product}
                     onSelectProduct={() => {
@@ -218,7 +229,7 @@ export default function RacketsShoes() {
                 ))}
               </div>
             ) : (
-              <p>Không có sản phẩm ở trang này!</p>
+              <p>Không có sản phẩm ở trang hay bộ lọc này!</p>
             )}
           </ComponentSpinner>
 

@@ -11,17 +11,17 @@ export default function SaleOff() {
     {
       id: 1,
       imageUrl: item1,
-      to: "#",
+      to: "/sale-off/rackets-shoes?product_type=racket",
     },
     {
       id: 2,
       imageUrl: item2,
-      to: "#",
+      to: "/sale-off/rackets-shoes?product_type=shoes",
     },
     {
       id: 3,
       imageUrl: item3,
-      to: "#",
+      to: "/sale-off/clothes",
     },
   ];
 
@@ -31,7 +31,11 @@ export default function SaleOff() {
 
       <div className="grid grid-cols-3 gap-4">
         {SALE_OFF_ITEMS.map(({ id, imageUrl, to }) => (
-          <Link key={id} to={to} className="col-span-1 rounded overflow-hidden hover:scale-105 duration-300">
+          <Link
+            key={id}
+            to={to}
+            className="col-span-1 rounded overflow-hidden hover:scale-105 duration-300"
+          >
             <img
               src={imageUrl}
               alt="sale-off"

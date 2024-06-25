@@ -8,6 +8,9 @@ import Header from "./components/layouts/Header";
 import SaleRacketsShoes from "./pages/SaleOff/SaleRacketsShoes";
 import SaleClothes from "./pages/SaleOff/SaleClothes";
 import StoreProvider from "./context/StoreProvider";
+import Rackets from "./pages/Products/AllRacketsShoes/Rackets";
+import AllClothes from "./pages/Products/AllClothes";
+import Shoes from "./pages/Products/AllRacketsShoes/Shoes";
 
 function App() {
   return (
@@ -16,6 +19,12 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Outlet />}>
+            <Route path="" element={<Navigate to="/products/rackets" />} />
+            <Route path="rackets" element={<Rackets />} />
+            <Route path="shoes" element={<Shoes />} />
+            <Route path="clothes" element={<AllClothes />} />
+          </Route>
           <Route path="/sale-off" element={<Outlet />}>
             <Route
               path=""

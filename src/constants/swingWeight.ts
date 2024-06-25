@@ -1,27 +1,14 @@
-export type SwingWeight = {
-  type: string;
-  name: string;
+export type SwingWeightType = "<82" | "82_84" | "84_86" | "86_88" | ">88";
+
+export const SwingWeight: { [key in SwingWeightType]: { label: string } } = {
+  "<82": { label: "Dưới 82 kg/cm2" },
+  "82_84": { label: "82-84 kg/cm2" },
+  "84_86": { label: "84-86 kg/cm2" },
+  "86_88": { label: "86-88 kg/cm2" },
+  ">88": { label: "Trên 88 kg/cm2" },
 };
 
-export const swingWeights: SwingWeight[] = [
-  {
-    type: "<82",
-    name: "Dưới 82 kg/cm2",
-  },
-  {
-    type: "82_84",
-    name: "82-84 kg/cm2",
-  },
-  {
-    type: "84_86",
-    name: "84-86 kg/cm2",
-  },
-  {
-    type: "86_88",
-    name: "86-88 kg/cm2",
-  },
-  {
-    type: ">88",
-    name: "Trên 88 kg/cm2",
-  },
-];
+export const swingWeights = Object.keys(SwingWeight).map((key) => ({
+  type: key as SwingWeightType,
+  label: SwingWeight[key as SwingWeightType].label,
+}));

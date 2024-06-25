@@ -11,20 +11,23 @@ export default function SelectedFilters(props: Props) {
 
   const renderItem = (item: string) => (
     <button
+      key={item}
       type="button"
       onClick={() =>
         onDeleteItem(selectedItems.filter((prev) => prev !== item))
       }
-      className="flex items-center gap-1 py-0.5 px-2 bg-pink border border-pink rounded-md text-white hover:bg-white hover:text-pink"
+      className="flex items-center gap-1 py-0.5 px-2 bg-pink border border-pink rounded-md text-sm text-white hover:bg-white hover:text-pink"
     >
       <label>{object[item].label}</label>
-      <IoClose size={18} />
+      <IoClose size={15} />
     </button>
   );
 
   return (
     !!selectedItems.length && (
-      <div className="flex flex-wrap gap-1">{selectedItems.map(renderItem)}</div>
+      <div className="flex flex-wrap gap-1">
+        {selectedItems.map(renderItem)}
+      </div>
     )
   );
 }

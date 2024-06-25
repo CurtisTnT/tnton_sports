@@ -15,6 +15,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 1,
     label: "Vợt cầu lông",
     producType: "racket",
+    href: "/products/rackets",
     items: [
       { id: 1, label: "Vợt cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Vợt cầu lông Victor", brand: "victor" },
@@ -27,6 +28,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 2,
     label: "Giày cầu lông",
     producType: "shoes",
+    href: "/products/shoes",
     items: [
       { id: 1, label: "Giày cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Giày cầu lông Victor", brand: "victor" },
@@ -39,6 +41,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 3,
     label: "Áo cầu lông",
     producType: "shirt",
+    href: "#",
     items: [
       { id: 1, label: "Áo cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Áo cầu lông Victor", brand: "victor" },
@@ -51,6 +54,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 4,
     label: "Quần cầu lông",
     producType: "pants",
+    href: "#",
     items: [
       { id: 1, label: "Quần cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Quần cầu lông Victor", brand: "victor" },
@@ -63,6 +67,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 5,
     label: "Váy cầu lông",
     producType: "dress",
+    href: "#",
     items: [
       { id: 1, label: "Váy cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Váy cầu lông Victor", brand: "victor" },
@@ -149,30 +154,28 @@ export default function Header() {
 
                 <div className="absolute self-start top-[54px] w-screen -translate-x-1/4 bg-white p-5 shadow-[0px_0px_10px_1px] shadow-pink/40 hidden group-hover:block">
                   <div className="grid grid-cols-5 gap-4">
-                    {PRODUCT_NAV_ITEMS.map(
-                      ({ id, label, producType, items }) => (
-                        <div key={id} className="col-span-1 flex flex-col">
-                          <Link
-                            to={producType}
-                            className="border-b border-pink text-pink font-semibold uppercase"
-                          >
-                            {label}
-                          </Link>
+                    {PRODUCT_NAV_ITEMS.map(({ id, label, href, items }) => (
+                      <div key={id} className="col-span-1 flex flex-col">
+                        <Link
+                          to={href}
+                          className="border-b border-pink text-pink font-semibold uppercase"
+                        >
+                          {label}
+                        </Link>
 
-                          <div className="flex flex-col items-start pt-4">
-                            {items.map(({ id, brand, label }) => (
-                              <Link
-                                key={id}
-                                to={brand}
-                                className="text-sm hover:text-pink"
-                              >
-                                {label}
-                              </Link>
-                            ))}
-                          </div>
+                        <div className="flex flex-col items-start pt-4">
+                          {items.map(({ id, brand, label }) => (
+                            <Link
+                              key={id}
+                              to={`${href}?brand=${brand}`}
+                              className="text-sm hover:text-pink"
+                            >
+                              {label}
+                            </Link>
+                          ))}
                         </div>
-                      )
-                    )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </li>
