@@ -26,19 +26,19 @@ export default function AllProducts() {
       id: 3,
       label: "Áo cầu lông",
       imageUrl: shirtImg,
-      to: "#",
+      to: "/products/shirts",
     },
     {
       id: 4,
       label: "Quần cầu lông",
       imageUrl: pantsImg,
-      to: "#",
+      to: "/products/pants",
     },
     {
       id: 5,
       label: "Váy cầu lông",
       imageUrl: dressImg,
-      to: "#",
+      to: "/products/dresses",
     },
   ];
 

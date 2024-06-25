@@ -8,9 +8,11 @@ import Header from "./components/layouts/Header";
 import SaleRacketsShoes from "./pages/SaleOff/SaleRacketsShoes";
 import SaleClothes from "./pages/SaleOff/SaleClothes";
 import StoreProvider from "./context/StoreProvider";
-import Rackets from "./pages/Products/AllRacketsShoes/Rackets";
-import AllClothes from "./pages/Products/AllClothes";
-import Shoes from "./pages/Products/AllRacketsShoes/Shoes";
+import Rackets from "./pages/Products/Rackets";
+import Shirts from "./pages/Products/Shirts";
+import Shoes from "./pages/Products/Shoes";
+import Pants from "./pages/Products/Pants";
+import Dresses from "./pages/Products/Dresses";
 
 function App() {
   return (
@@ -23,7 +25,9 @@ function App() {
             <Route path="" element={<Navigate to="/products/rackets" />} />
             <Route path="rackets" element={<Rackets />} />
             <Route path="shoes" element={<Shoes />} />
-            <Route path="clothes" element={<AllClothes />} />
+            <Route path="shirts" element={<Shirts />} />
+            <Route path="pants" element={<Pants />} />
+            <Route path="dresses" element={<Dresses />} />
           </Route>
           <Route path="/sale-off" element={<Outlet />}>
             <Route

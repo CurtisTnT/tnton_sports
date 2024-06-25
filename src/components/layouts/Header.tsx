@@ -41,7 +41,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 3,
     label: "Áo cầu lông",
     producType: "shirt",
-    href: "#",
+    href: "/products/shirts",
     items: [
       { id: 1, label: "Áo cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Áo cầu lông Victor", brand: "victor" },
@@ -54,7 +54,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 4,
     label: "Quần cầu lông",
     producType: "pants",
-    href: "#",
+    href: "/products/pants",
     items: [
       { id: 1, label: "Quần cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Quần cầu lông Victor", brand: "victor" },
@@ -67,7 +67,7 @@ const PRODUCT_NAV_ITEMS = [
     id: 5,
     label: "Váy cầu lông",
     producType: "dress",
-    href: "#",
+    href: "/products/dresses",
     items: [
       { id: 1, label: "Váy cầu lông Yonex", brand: "yonex" },
       { id: 2, label: "Váy cầu lông Victor", brand: "victor" },
