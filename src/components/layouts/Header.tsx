@@ -9,6 +9,7 @@ import { FaRegUser } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa6";
 
 import shopName from "@/assets/images/shopName.png";
+import { useStore } from "@/context/Store";
 
 const PRODUCT_NAV_ITEMS = [
   {
@@ -79,6 +80,8 @@ const PRODUCT_NAV_ITEMS = [
 ];
 
 export default function Header() {
+  const { setAppState } = useStore();
+
   const divRef = useRef<HTMLDivElement>(null);
   const appIconRef = useRef<HTMLAnchorElement>(null);
 
@@ -240,25 +243,34 @@ export default function Header() {
             </button>
 
             <div className="flex gap-2 px-4">
-              <Link
-                to="/favorite"
+              <button
+                type="button"
                 className="relative p-2 border rounded-3xl hover:text-pink"
+                onClick={() =>
+                  setAppState((prev) => ({
+                    ...prev,
+                    isFavoriteModalOpen: true,
+                  }))
+                }
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
                   2
                 </span>
                 <FaRegHeart size={25} className="shrink-0" />
-              </Link>
+              </button>
 
-              <Link
-                to="/shopping-cart"
+              <button
+                type="button"
                 className="relative p-2 border rounded-3xl hover:text-pink"
+                onClick={() =>
+                  setAppState((prev) => ({ ...prev, isCartModalOpen: true }))
+                }
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
                   2
                 </span>
                 <PiShoppingCartSimpleBold size={25} className="shrink-0" />
-              </Link>
+              </button>
 
               <Link
                 to="/profile"

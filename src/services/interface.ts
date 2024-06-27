@@ -48,7 +48,8 @@ export interface Products {
   clothes: Clothes[];
 }
 
-export type Product = Omit<Clothes, "clothes_sizes" | "product_type"> & {
+export type Product = Omit<Clothes, "id" | "clothes_sizes" | "product_type"> & {
+  id: string | number;
   clothes_sizes?: ClothesSizeType[];
   shoes_size?: string[];
   hight_light?: string;
@@ -61,6 +62,8 @@ export type Product = Omit<Clothes, "clothes_sizes" | "product_type"> & {
   stiffness?: string;
   price_level?: string;
   product_type: ProductTypeType | null;
+  selectedSize?: string;
+  selectedQuantity?: number;
 };
 
 export interface News {

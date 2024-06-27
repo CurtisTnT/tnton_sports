@@ -15,7 +15,14 @@ import { ProductTypeType } from "@/constants/productType";
 import { Store } from "@/constants/store";
 import StoreList from "./StoreList";
 import Modal, { ModalRef } from "./modals/Modal";
-import { IoClose } from "react-icons/io5";
+
+import AddToCartButton from "./buttons/AddToCartButton";
+import BuyNowButton from "./buttons/BuyNowButton";
+import AddToFavoriteButton from "./buttons/AddToFavoriteButton";
+import { useStore } from "@/context/Store";
+import AddToCartSuccessModal from "./modals/AddToCartSuccessModal";
+import AddToFavoriteSuccessModal from "./modals/AddToFavoriteSuccessModal";
+import AddToCartUnsuccessModal from "./modals/AddToCartUnsuccessModal";
 
 type Props = {
   product: Product;
@@ -101,13 +108,71 @@ export default function ProductDetailsPage(props: Props) {
     discount_percent,
   } = product;
 
+  const {
+    appState: { favoriteItems, cartItems },
+    setAppState,
+  } = useStore();
+
   const [previewImg, setPreviewImg] = useState("");
   const [selectedAttributes, setSelectedAttributes] = useState<{
     size: string;
     quantity: number;
   }>({ size: "", quantity: 1 });
+  const [error, setError] = useState("");
 
   const zoomImgModalRef = useRef<ModalRef>(null);
+  const addToCartSuccessModalRef = useRef<ModalRef>(null);
+  const addToFavoriteSuccessModalRef = useRef<ModalRef>(null);
+  const addToCartUnsuccessModalRef = useRef<ModalRef>(null);
+
+  const handleAddToCart = () => {
+    if (!selectedAttributes.size && product_type !== "racket") {
+      setError("Vui lòng chọn size");
+    } else {
+      const selectedProductId =
+        product.id + product.product_type! + selectedAttributes.size;
+
+      if (cartItems.map(({ id }) => id).includes(selectedProductId)) {
+        addToCartUnsuccessModalRef.current?.open();
+      } else {
+        setAppState((prev) => ({
+          ...prev,
+          cartItems: [
+            ...prev.cartItems,
+            {
+              ...product,
+              id: selectedProductId,
+              selectedQuantity: selectedAttributes.quantity,
+              selectedSize: selectedAttributes.size,
+            },
+          ],
+        }));
+        addToCartSuccessModalRef.current?.open();
+      }
+    }
+  };
+
+  const handleAddProductToFavorite = () => {
+    const selectedProductId = product.id + product.product_type!;
+
+    if (favoriteItems.map(({ id }) => id).includes(selectedProductId)) {
+      //
+    } else {
+      setAppState((prev) => ({
+        ...prev,
+        favoriteItems: [
+          ...prev.favoriteItems,
+          {
+            ...product,
+            id: selectedProductId,
+            selectedQuantity: selectedAttributes.quantity,
+            selectedSize: selectedAttributes.size,
+          },
+        ],
+      }));
+      addToFavoriteSuccessModalRef.current?.open();
+    }
+  };
 
   useEffect(() => {
     if (image_url.length) {
@@ -129,6 +194,44 @@ export default function ProductDetailsPage(props: Props) {
     <div key={item.id} className="flex gap-1 pl-2">
       <PiShieldCheckFill size={18} className="text-pink" />
       <p className="text-sm">{item.title}</p>
+    </div>
+  );
+
+  const renderSelectSize = (opts: {
+    initItems: { type: string; label: string }[];
+    curItems: string[];
+  }) => (
+    <div className="flex gap-2">
+      {opts.initItems.map(({ type, label }) => {
+        const isActive = opts.curItems.includes(type);
+        const isSelected = selectedAttributes.size === type;
+        return (
+          <button
+            key={type}
+            type="button"
+            className={clsx("relative border rounded px-2 py-1", {
+              "bg-gray-300": !isActive,
+              "bg-pink text-white border-pink": isSelected,
+            })}
+            disabled={!isActive}
+            onClick={() => {
+              setError("");
+              setSelectedAttributes((prev) => ({
+                ...prev,
+                size: type,
+              }));
+            }}
+          >
+            {label}
+            {!isActive && (
+              <TfiClose
+                size={33}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+              />
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 
@@ -250,73 +353,25 @@ export default function ProductDetailsPage(props: Props) {
             {product_type !== "racket" && (
               <div className="space-y-1 !mb-4">
                 <h3>Chọn size:</h3>
-                {clothes_sizes && (
-                  <div className="flex gap-2">
-                    {clothesSizes.map(({ type, label }) => {
-                      const isActive = clothes_sizes.includes(type);
-                      const isSelected = selectedAttributes.size === type;
-                      return (
-                        <button
-                          key={type}
-                          type="button"
-                          className={clsx("relative border rounded px-2 py-1", {
-                            "bg-gray-300": !isActive,
-                            "bg-pink text-white border-pink": isSelected,
-                          })}
-                          disabled={!isActive}
-                          onClick={() =>
-                            setSelectedAttributes((prev) => ({
-                              ...prev,
-                              size: type,
-                            }))
-                          }
-                        >
-                          {label}
-                          {!isActive && (
-                            <TfiClose
-                              size={33}
-                              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                {clothes_sizes &&
+                  renderSelectSize({
+                    initItems: clothesSizes,
+                    curItems: clothes_sizes,
+                  })}
 
-                {shoes_size && (
-                  <div className="flex gap-2">
-                    {shoesSizes.map(({ type, label }) => {
-                      const isActive = shoes_size.includes(type);
-                      const isSelected = selectedAttributes.size === type;
-                      return (
-                        <button
-                          key={type}
-                          type="button"
-                          className={clsx("relative border rounded px-2 py-1", {
-                            "bg-gray-300": !isActive,
-                            "bg-pink text-white border-pink": isSelected,
-                          })}
-                          disabled={!isActive}
-                          onClick={() =>
-                            setSelectedAttributes((prev) => ({
-                              ...prev,
-                              size: type,
-                            }))
-                          }
-                        >
-                          {label}
-                          {!isActive && (
-                            <TfiClose
-                              size={33}
-                              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
+                {shoes_size &&
+                  renderSelectSize({
+                    initItems: shoesSizes,
+                    curItems: shoes_size,
+                  })}
+
+                <p
+                  className={clsx("text-red-500 text-xs h-4", {
+                    invisible: !error,
+                  })}
+                >
+                  {error}
+                </p>
               </div>
             )}
 
@@ -362,24 +417,9 @@ export default function ProductDetailsPage(props: Props) {
           </div>
 
           <div className="flex gap-2">
-            <button
-              type="button"
-              className="py-2 px-5 bg-pink border border-pink rounded-lg text-sm text-white font-semibold hover:text-pink hover:bg-white"
-            >
-              Mua ngay
-            </button>
-            <button
-              type="button"
-              className="py-2 px-5 bg-[#ffb916] border border-[#ffb916] rounded-lg text-sm text-white font-semibold hover:text-[#ffb916] hover:bg-white"
-            >
-              Thêm vào giỏ hàng
-            </button>
-            <button
-              type="button"
-              className="py-2 px-5 bg-[#E95221] border border-[#E95221] rounded-lg text-sm text-white font-semibold hover:text-[#E95221] hover:bg-white"
-            >
-              Thêm vào yêu thích
-            </button>
+            <BuyNowButton onClick={() => {}} />
+            <AddToCartButton onClick={handleAddToCart} />
+            <AddToFavoriteButton onClick={handleAddProductToFavorite} />
           </div>
         </div>
 
@@ -388,16 +428,27 @@ export default function ProductDetailsPage(props: Props) {
 
       <Modal ref={zoomImgModalRef}>
         <div className="relative flex justify-center">
-          <button
-            type="button"
-            onClick={() => zoomImgModalRef.current?.close()}
-            className="absolute top-3 right-3 hover:opacity-80"
-          >
-            <IoClose size={20} />
-          </button>
           <img src={previewImg} alt="preview-image" />
         </div>
       </Modal>
+
+      <AddToCartSuccessModal
+        addToCartSuccessModalRef={addToCartSuccessModalRef}
+        product={product}
+        selectedAttributes={selectedAttributes}
+        onClose={() => addToCartSuccessModalRef.current?.close()}
+      />
+
+      <AddToFavoriteSuccessModal
+        addToFavoriteSuccessModalRef={addToFavoriteSuccessModalRef}
+        product={product}
+        onClose={() => addToFavoriteSuccessModalRef.current?.close()}
+      />
+
+      <AddToCartUnsuccessModal
+        addToCartUnsuccessModalRef={addToCartUnsuccessModalRef}
+        onClose={() => addToCartUnsuccessModalRef.current?.close()}
+      />
     </ContentContainer>
   );
 }

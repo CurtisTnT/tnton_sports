@@ -243,7 +243,7 @@ export default function Pants() {
       <DetailProductModal
         detailProductModalRef={detailProductModalRef}
         selectedProduct={selectedProduct}
-        closeModal={() => detailProductModalRef.current?.close()}
+        onClose={() => detailProductModalRef.current?.close()}
       />
     </ContentContainer>
   );

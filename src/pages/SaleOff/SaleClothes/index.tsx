@@ -233,7 +233,7 @@ export default function SaleClothes() {
       <DetailProductModal
         detailProductModalRef={detailProductModalRef}
         selectedProduct={selectedProduct}
-        closeModal={() => detailProductModalRef.current?.close()}
+        onClose={() => detailProductModalRef.current?.close()}
       />
     </ContentContainer>
   );

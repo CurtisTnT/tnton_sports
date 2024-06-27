@@ -145,7 +145,7 @@ export default function NewProducts() {
       <DetailProductModal
         detailProductModalRef={detailProductModalRef}
         selectedProduct={selectedProduct}
-        closeModal={() => detailProductModalRef.current?.close()}
+        onClose={() => detailProductModalRef.current?.close()}
       />
     </>
   );

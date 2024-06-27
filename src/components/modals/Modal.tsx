@@ -16,6 +16,7 @@ import {
   TransitionClasses,
 } from "@headlessui/react";
 import clsx from "clsx";
+import { IoClose } from "react-icons/io5";
 
 import ComponentSpinner from "@/components/loading/ComponentSpinner";
 
@@ -57,6 +58,11 @@ function Modal(props: PropsWithChildren<Props>, forwardRef: Ref<ModalRef>) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
 
+  const handleClose = () => {
+    onClose && onClose();
+    setIsOpenModal(false);
+  };
+
   useImperativeHandle(forwardRef, () => ({
     open: () => setIsOpenModal(true),
     close: () => setIsOpenModal(false),
@@ -65,25 +71,7 @@ function Modal(props: PropsWithChildren<Props>, forwardRef: Ref<ModalRef>) {
 
   return (
     <Transition appear show={isOpenModal} as={Fragment}>
-      <Dialog
-        as="div"
-        open={isOpenModal}
-        onClose={() => {
-          onClose && onClose();
-          setIsOpenModal(false);
-        }}
-      >
-        <TransitionChild
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <div className="fixed inset-0" />
-        </TransitionChild>
+      <Dialog as="div" open={isOpenModal} onClose={handleClose}>
         <div className="fixed inset-0 bg-[black]/60 z-[999] overflow-y-auto">
           <div
             className={clsx(
@@ -98,7 +86,7 @@ function Modal(props: PropsWithChildren<Props>, forwardRef: Ref<ModalRef>) {
               <DialogPanel
                 as="div"
                 className={clsx(
-                  "relative bg-white shadow border-0 p-0 rounded-[5px] w-full my-8 antialiased",
+                  "relative bg-white shadow border-0 p-0 rounded-[5px] w-full my-8 antialiased overflow-hidden",
                   {
                     "max-w-xl": size === "sm",
                     "max-w-3xl": size === "md",
@@ -108,6 +96,14 @@ function Modal(props: PropsWithChildren<Props>, forwardRef: Ref<ModalRef>) {
                 )}
               >
                 <ComponentSpinner isLoading={modalLoading}>
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="absolute z-10 top-3 right-3 hover:opacity-80"
+                  >
+                    <IoClose size={20} />
+                  </button>
+
                   {header}
 
                   {children}
