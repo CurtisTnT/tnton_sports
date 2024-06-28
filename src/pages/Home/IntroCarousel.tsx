@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
+import { Link } from "react-router-dom";
 
 import HomeTitle from "@/components/titles/HomeTitle";
 import prodCarousel1 from "@/assets/images/prodCarousel1.webp";
@@ -22,39 +23,47 @@ export default function IntroCarousel() {
         modules={[Autoplay]}
       >
         <SwiperSlide>
-          <img
-            src={prodCarousel1}
-            alt="prodImg"
-            height={640}
-            className="h-[640px]"
-          />
+          <Link to="/products/rackets/55">
+            <img
+              src={prodCarousel1}
+              alt="prodImg"
+              height={640}
+              className="h-[640px]"
+            />
+          </Link>
         </SwiperSlide>
 
         <SwiperSlide>
-          <img
-            src={prodCarousel2}
-            alt="prodImg"
-            height={640}
-            className="h-[640px] w-full"
-          />
+          <Link to="/products/shoes/56">
+            <img
+              src={prodCarousel2}
+              alt="prodImg"
+              height={640}
+              className="h-[640px] w-full"
+            />
+          </Link>
         </SwiperSlide>
 
         <SwiperSlide>
-          <img
-            src={prodCarousel3}
-            alt="prodImg"
-            height={640}
-            className="h-[640px] w-full"
-          />
+          <Link to="/products/shoes/57">
+            <img
+              src={prodCarousel3}
+              alt="prodImg"
+              height={640}
+              className="h-[640px] w-full"
+            />
+          </Link>
         </SwiperSlide>
 
         <SwiperSlide>
-          <img
-            src={prodCarousel4}
-            alt="prodImg"
-            height={640}
-            className="h-[640px] w-full"
-          />
+          <Link to="/products/rackets/58">
+            <img
+              src={prodCarousel4}
+              alt="prodImg"
+              height={640}
+              className="h-[640px] w-full"
+            />
+          </Link>
         </SwiperSlide>
       </Swiper>
     </section>

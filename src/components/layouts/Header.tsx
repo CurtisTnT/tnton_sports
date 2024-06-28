@@ -10,6 +10,7 @@ import { FaAngleDown } from "react-icons/fa6";
 
 import shopName from "@/assets/images/shopName.png";
 import { useStore } from "@/context/Store";
+import SearchProductModal from "@/components/modals/SearchProductModal";
 
 const PRODUCT_NAV_ITEMS = [
   {
@@ -80,7 +81,10 @@ const PRODUCT_NAV_ITEMS = [
 ];
 
 export default function Header() {
-  const { setAppState } = useStore();
+  const {
+    appState: { cartItems, favoriteItems },
+    setAppState,
+  } = useStore();
 
   const divRef = useRef<HTMLDivElement>(null);
   const appIconRef = useRef<HTMLAnchorElement>(null);
@@ -237,6 +241,9 @@ export default function Header() {
             <button
               type="button"
               className="flex flex-grow gap-2 items-center pb-1 border-b hover:text-pink"
+              onClick={() =>
+                setAppState((prev) => ({ ...prev, isSearchModalOpen: true }))
+              }
             >
               <RiSearchLine size={25} className="shrink-0" />
               <span>Tìm kiếm</span>
@@ -254,7 +261,7 @@ export default function Header() {
                 }
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
-                  2
+                  {favoriteItems.length || 0}
                 </span>
                 <FaRegHeart size={25} className="shrink-0" />
               </button>
@@ -267,7 +274,7 @@ export default function Header() {
                 }
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
-                  2
+                  {cartItems.length || 0}
                 </span>
                 <PiShoppingCartSimpleBold size={25} className="shrink-0" />
               </button>
@@ -282,6 +289,8 @@ export default function Header() {
           </div>
         </div>
       </div>
+
+      <SearchProductModal />
     </>
   );
 }

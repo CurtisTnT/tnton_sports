@@ -19,10 +19,29 @@ import PantsDetails from "./pages/Products/Pants/Details";
 import DressesDetails from "./pages/Products/Dresses/Details";
 import FavoriteProductsModal from "./components/modals/FavoriteProductModal";
 import CartModal from "./components/modals/CartModal";
+import { useStore } from "./context/Store";
+import { useEffect } from "react";
+import { getClothes, getRacketsAndShoes } from "./services/productsAction";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
+  const { setAppState } = useStore();
+
+  useEffect(() => {
+    (async () => {
+      const res = await getRacketsAndShoes();
+      setAppState((prev) => ({ ...prev, racketsAndShoes: res }));
+    })();
+
+    (async () => {
+      const res = await getClothes();
+      setAppState((prev) => ({ ...prev, clothes: res }));
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <main className="text-black">
+    <main className="relative text-black">
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -44,6 +63,7 @@ function App() {
           <Route path="rackets-shoes" element={<SaleRacketsShoes />} />
           <Route path="clothes" element={<SaleClothes />} />
         </Route>
+        <Route path="/search-results" element={<SearchResults />} />
         <Route path="*" element={<h1>404 Page not found!</h1>} />
       </Routes>
 

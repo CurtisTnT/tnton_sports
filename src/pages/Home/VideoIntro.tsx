@@ -16,10 +16,17 @@ export default function VideoIntro() {
           giới...
         </p>
 
-        <Link to="/badminton-introduction" className="group mt-2 border border-white bg-transparent self-end">
+        <Link
+          to="https://hvshop.vn/cau-long-la-gi/"
+          target="_blank"
+          className="group mt-2 border border-white bg-transparent self-end"
+        >
           <div className="flex items-center gap-4 -translate-x-[3px] -translate-y-[3px] bg-white text-black px-4 py-3 group-hover:text-pink">
             <p className="font-semibold">Khám phá thêm</p>
-            <FaArrowRightLong size={20} className="shrink-0 group-hover:translate-x-2 duration-300" />
+            <FaArrowRightLong
+              size={20}
+              className="shrink-0 group-hover:translate-x-2 duration-300"
+            />
           </div>
         </Link>
       </div>
