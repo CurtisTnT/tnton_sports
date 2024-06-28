@@ -23,6 +23,8 @@ import { useStore } from "./context/Store";
 import { useEffect } from "react";
 import { getClothes, getRacketsAndShoes } from "./services/productsAction";
 import SearchResults from "./pages/SearchResults";
+import News from "./pages/News";
+import Contact from "./pages/Contact";
 
 function App() {
   const { setAppState } = useStore();
@@ -64,6 +66,8 @@ function App() {
           <Route path="clothes" element={<SaleClothes />} />
         </Route>
         <Route path="/search-results" element={<SearchResults />} />
+        <Route path="/news" element={<News />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<h1>404 Page not found!</h1>} />
       </Routes>
 
