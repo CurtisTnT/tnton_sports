@@ -116,9 +116,9 @@ export default function NewProducts() {
                   key={type}
                   type="button"
                   className={clsx(
-                    "shrink-0 w-[200px] py-1 m-2 rounded text-xl font-semibold",
+                    "shrink-0 w-[200px] py-1 m-2 text-xl font-semibold",
                     {
-                      "bg-pink text-white": isSelected,
+                      "bg-pink text-white rounded": isSelected,
                       "text-white-dark-yellow": !isSelected,
                     }
                   )}

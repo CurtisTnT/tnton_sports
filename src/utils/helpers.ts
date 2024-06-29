@@ -17,3 +17,13 @@ export const formatDateTime = (date: string | Date) => {
     hour12: false,
   });
 };
+
+export const validatePhoneNumber = (phoneNumber: string) => {
+  const phonePattern = /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
+  return phonePattern.test(phoneNumber);
+};
+
+export const validateEmail = (email: string) => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
+};

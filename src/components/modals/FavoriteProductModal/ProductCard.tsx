@@ -47,14 +47,17 @@ export default function ProductCard(props: Props) {
     } else {
       setAppState((prev) => ({
         ...prev,
-        cartItems: [
-          ...prev.cartItems,
-          {
-            ...product,
-            selectedQuantity: selectedAttributes.quantity,
-            selectedSize: selectedAttributes.size,
-          },
-        ],
+        user: {
+          ...prev.user,
+          cart_products: [
+            ...prev.user.cart_products,
+            {
+              ...product,
+              selectedQuantity: selectedAttributes.quantity,
+              selectedSize: selectedAttributes.size,
+            },
+          ],
+        },
       }));
       addToCartSuccessModalRef.current?.open();
     }

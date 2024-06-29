@@ -18,7 +18,9 @@ export default function ProductDetailOverlay(props: Props) {
   const { product, onSeeDetailProduct } = props;
 
   const {
-    appState: { favoriteItems },
+    appState: {
+      user: { favorite_products },
+    },
     setAppState,
   } = useStore();
 
@@ -51,18 +53,21 @@ export default function ProductDetailOverlay(props: Props) {
   const handleAddProductToFavorite = () => {
     const selectedProductId = product.id + product.product_type!;
 
-    if (favoriteItems.map(({ id }) => id).includes(selectedProductId)) {
+    if (favorite_products.map(({ id }) => id).includes(selectedProductId)) {
       //
     } else {
       setAppState((prev) => ({
         ...prev,
-        favoriteItems: [
-          ...prev.favoriteItems,
-          {
-            ...product,
-            id: selectedProductId,
-          },
-        ],
+        user: {
+          ...prev.user,
+          favorite_products: [
+            ...prev.user.favorite_products,
+            {
+              ...product,
+              id: selectedProductId,
+            },
+          ],
+        },
       }));
       addToFavoriteSuccessModalRef.current?.open();
     }

@@ -1,4 +1,4 @@
-import { Clothes, Product, Products, RacketShoes } from "./interface";
+import { Clothes, Product, Products, RacketShoes, User } from "./interface";
 
 export const initialRacketShoes: RacketShoes = {
   id: 0,
@@ -70,4 +70,14 @@ export const initialProduct: Product = {
   stiffness: "",
   product_type: null,
   clothes_sizes: [],
+};
+
+export const initialUser: User = {
+  id: 0,
+  name: "",
+  email: "",
+  phone_number: "",
+  password: "",
+  cart_products: [],
+  favorite_products: [],
 };

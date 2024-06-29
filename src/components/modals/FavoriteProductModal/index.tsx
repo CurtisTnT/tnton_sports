@@ -6,7 +6,10 @@ import ProductCard from "./ProductCard";
 
 export default function FavoriteProductsModal() {
   const {
-    appState: { isFavoriteModalOpen, favoriteItems },
+    appState: {
+      isFavoriteModalOpen,
+      user: { favorite_products },
+    },
     setAppState,
   } = useStore();
 
@@ -23,13 +26,13 @@ export default function FavoriteProductsModal() {
         <h2 className="text-xl text-pink font-bold uppercase">
           Danh mục sản phẩm yêu thích{" "}
           <span className="text-sm text-black font-normal lowercase">
-            ({favoriteItems.length} sản phẩm)
+            ({favorite_products.length} sản phẩm)
           </span>
         </h2>
       }
     >
       <div className="space-y-2 overflow-y-scroll h-[calc(100vh-108px)] scrollbar-hide">
-        {favoriteItems.map((product) => (
+        {favorite_products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

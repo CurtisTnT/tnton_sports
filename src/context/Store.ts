@@ -1,10 +1,9 @@
-import { Clothes, Product, RacketShoes } from "@/services/interface";
+import { initialUser } from "@/services/initialState";
+import { Clothes,  RacketShoes, User } from "@/services/interface";
 import { Dispatch, createContext, useContext } from "react";
 
 export type AppState = {
-  user: { id: number; name: string; email: string; token: string };
-  favoriteItems: Product[];
-  cartItems: Product[];
+  user: User;
   isFavoriteModalOpen: boolean;
   isCartModalOpen: boolean;
   isSearchModalOpen: boolean;
@@ -13,9 +12,7 @@ export type AppState = {
 };
 
 export const initialAppState: AppState = {
-  user: { id: 0, name: "", email: "", token: "" },
-  favoriteItems: [],
-  cartItems: [],
+  user: initialUser,
   isFavoriteModalOpen: false,
   isCartModalOpen: false,
   isSearchModalOpen: false,

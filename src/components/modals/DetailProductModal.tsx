@@ -39,7 +39,9 @@ export default function DetailProductModal(props: Props) {
   } = selectedProduct;
 
   const {
-    appState: { cartItems },
+    appState: {
+      user: { cart_products },
+    },
     setAppState,
   } = useStore();
 
@@ -68,20 +70,23 @@ export default function DetailProductModal(props: Props) {
         selectedProduct.product_type! +
         selectedAttributes.size;
 
-      if (cartItems.map(({ id }) => id).includes(selectedProductId)) {
+      if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
         addToCartUnsuccessModalRef.current?.open();
       } else {
         setAppState((prev) => ({
           ...prev,
-          cartItems: [
-            ...prev.cartItems,
-            {
-              ...selectedProduct,
-              id: selectedProductId,
-              selectedQuantity: selectedAttributes.quantity,
-              selectedSize: selectedAttributes.size,
-            },
-          ],
+          user: {
+            ...prev.user,
+            cart_products: [
+              ...prev.user.cart_products,
+              {
+                ...selectedProduct,
+                id: selectedProductId,
+                selectedQuantity: selectedAttributes.quantity,
+                selectedSize: selectedAttributes.size,
+              },
+            ],
+          },
         }));
         addToCartSuccessModalRef.current?.open();
       }
@@ -91,14 +96,17 @@ export default function DetailProductModal(props: Props) {
   const handleAddProductToFavorite = () => {
     setAppState((prev) => ({
       ...prev,
-      favoriteItems: [
-        ...prev.favoriteItems,
-        {
-          ...selectedProduct,
-          selectedQuantity: selectedAttributes.quantity,
-          selectedSize: selectedAttributes.size,
-        },
-      ],
+      user: {
+        ...prev.user,
+        favorite_products: [
+          ...prev.user.favorite_products,
+          {
+            ...selectedProduct,
+            selectedQuantity: selectedAttributes.quantity,
+            selectedSize: selectedAttributes.size,
+          },
+        ],
+      },
     }));
     addToFavoriteSuccessModalRef.current?.open();
   };

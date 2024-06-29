@@ -22,7 +22,9 @@ export default function AddToCartSuccessModal(props: Props) {
   const { name, image_url, price, init_price, product_type } = product;
 
   const {
-    appState: { cartItems },
+    appState: {
+      user: { cart_products },
+    },
     setAppState,
   } = useStore();
 
@@ -68,7 +70,7 @@ export default function AddToCartSuccessModal(props: Props) {
 
       <div className="p-2">
         <p className="text-sm">
-          Giỏ hàng của bạn hiện có <span>{cartItems.length}</span> sản phẩm.
+          Giỏ hàng của bạn hiện có <span>{cart_products.length}</span> sản phẩm.
         </p>
 
         <div className="flex justify-between mt-5">

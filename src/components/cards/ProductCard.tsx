@@ -46,10 +46,6 @@ export default function ProductCard(props: Props) {
         product={product}
         onSeeDetailProduct={onSelectProduct}
         // onAddProductInFavorite={() => {
-        //   setAppState((prev) => ({
-        //     ...prev,
-        //     favoriteItems: [...prev.favoriteItems, product],
-        //   }));
         // }}
       />
     </div>

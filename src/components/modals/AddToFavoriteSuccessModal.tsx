@@ -17,7 +17,9 @@ export default function AddToFavoriteSuccessModal(props: Props) {
   const { image_url, name, price, init_price } = product;
 
   const {
-    appState: { favoriteItems },
+    appState: {
+      user: { favorite_products },
+    },
     setAppState,
   } = useStore();
 
@@ -48,8 +50,8 @@ export default function AddToFavoriteSuccessModal(props: Props) {
 
       <div className="p-2">
         <p className="text-sm">
-          Danh mục yêu thích của bạn hiện có <span>{favoriteItems.length}</span>{" "}
-          sản phẩm.
+          Danh mục yêu thích của bạn hiện có{" "}
+          <span>{favorite_products.length}</span> sản phẩm.
         </p>
 
         <div className="flex justify-between mt-5">

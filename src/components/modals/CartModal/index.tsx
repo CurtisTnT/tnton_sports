@@ -5,12 +5,18 @@ import { formatVndCurrency } from "@/utils/helpers";
 
 export default function CartModal() {
   const {
-    appState: { isCartModalOpen, cartItems },
+    appState: {
+      isCartModalOpen,
+      user: { cart_products },
+    },
     setAppState,
   } = useStore();
 
-  const totalPrice = cartItems.reduce((acc, { price }) => (acc += price), 0);
-  const totalInitPrice = cartItems.reduce(
+  const totalPrice = cart_products.reduce(
+    (acc, { price }) => (acc += price),
+    0
+  );
+  const totalInitPrice = cart_products.reduce(
     (acc, { init_price }) => (acc += init_price),
     0
   );
@@ -28,7 +34,7 @@ export default function CartModal() {
         <h2 className="text-xl text-pink font-bold uppercase">
           Giỏ hàng{" "}
           <span className="text-sm text-black font-normal lowercase">
-            ({cartItems.length} sản phẩm)
+            ({cart_products.length} sản phẩm)
           </span>
         </h2>
       }
@@ -66,7 +72,7 @@ export default function CartModal() {
       }
     >
       <div className="space-y-2 overflow-y-scroll h-[calc(100vh-236px)] scrollbar-hide">
-        {cartItems.map((product) => (
+        {cart_products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

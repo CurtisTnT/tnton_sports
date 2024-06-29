@@ -103,3 +103,13 @@ export interface ProductParams {
   sortBy?: string;
   order?: "asc" | "desc";
 }
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  phone_number: string;
+  password: string;
+  cart_products: Product[];
+  favorite_products: Product[];
+}

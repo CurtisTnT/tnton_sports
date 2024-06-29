@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaPhoneFlip } from "react-icons/fa6";
 import { FaMapLocationDot } from "react-icons/fa6";
 import { RiSearchLine } from "react-icons/ri";
@@ -7,10 +7,17 @@ import { FaRegHeart } from "react-icons/fa";
 import { PiShoppingCartSimpleBold } from "react-icons/pi";
 import { FaRegUser } from "react-icons/fa";
 import { FaAngleDown } from "react-icons/fa6";
+import { IoLocationSharp } from "react-icons/io5";
+import { MdPhoneInTalk } from "react-icons/md";
+import { IoIosLogIn } from "react-icons/io";
+import { IoIosLogOut } from "react-icons/io";
+import { FiUserPlus } from "react-icons/fi";
 
 import shopName from "@/assets/images/shopName.png";
 import { useStore } from "@/context/Store";
 import SearchProductModal from "@/components/modals/SearchProductModal";
+import { stores } from "@/constants/store";
+import { initialUser } from "@/services/initialState";
 
 const PRODUCT_NAV_ITEMS = [
   {
@@ -81,13 +88,43 @@ const PRODUCT_NAV_ITEMS = [
 ];
 
 export default function Header() {
+  const navigate = useNavigate();
+
   const {
-    appState: { cartItems, favoriteItems },
+    appState: {
+      user: { id, cart_products, favorite_products },
+    },
     setAppState,
   } = useStore();
 
   const divRef = useRef<HTMLDivElement>(null);
   const appIconRef = useRef<HTMLAnchorElement>(null);
+
+  const PROFILE_ITEMS = id
+    ? [
+        {
+          id: 1,
+          label: "Đăng xuất",
+          onClick: () => {
+            setAppState((prev) => ({ ...prev, user: initialUser }));
+          },
+          icon: <IoIosLogOut size={18} />,
+        },
+      ]
+    : [
+        {
+          id: 1,
+          label: "Đăng nhập",
+          onClick: () => navigate("/sign-in"),
+          icon: <IoIosLogIn size={18} />,
+        },
+        {
+          id: 2,
+          label: "Đăng kí",
+          onClick: () => navigate("/sign-up"),
+          icon: <FiUserPlus size={18} />,
+        },
+      ];
 
   useEffect(() => {
     const checkDivRef = () => {
@@ -114,16 +151,42 @@ export default function Header() {
           <div className="col-span-4 flex items-center gap-2">
             <FaPhoneFlip size={20} className="shrink-0" />
             <p>Hotline: </p>
-            <button className="font-bold">0987258871</button>
+            <span className="font-bold">0987258871</span>
           </div>
 
           <Link to="/" className="col-span-4 justify-self-center h-[44px]">
             <img src={shopName} alt="shopName" width={120} />
           </Link>
 
-          <div className="col-span-4 flex items-center justify-end gap-2">
+          <div className="relative col-span-4 flex items-center justify-end gap-2 group">
             <FaMapLocationDot size={25} className="shrink-0" />
-            <button className="text-sm">HỆ THỐNG CỬA HÀNG</button>
+            <span className="text-sm">HỆ THỐNG CỬA HÀNG</span>
+            <div className="absolute w-[300px] h-[300px] overflow-y-scroll z-50 top-10 space-y-px p-1 bg-white rounded shadow-[0px_0px_10px_1px_rgb(0,0,0,0.1)] hidden group-hover:block text-xs">
+              {stores.map(({ type, label, address, phone_number }) => (
+                <div key={type} className="border border-white-dark-yellow">
+                  <div className="w-full p-2 bg-white-dark-yellow text-start text-white font-bold">
+                    {label}
+                  </div>
+
+                  <div className="space-y-1 p-1 font-medium duration-500 text-black-light">
+                    <div className="flex gap-1">
+                      <IoLocationSharp
+                        size={20}
+                        className="shrink-0 text-white-dark-yellow"
+                      />
+                      <p> {address}</p>
+                    </div>
+                    <div className="flex gap-1">
+                      <MdPhoneInTalk
+                        size={18}
+                        className="shrink-0 text-white-dark-yellow"
+                      />
+                      <p> {phone_number}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -261,7 +324,7 @@ export default function Header() {
                 }
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
-                  {favoriteItems.length || 0}
+                  {favorite_products.length || 0}
                 </span>
                 <FaRegHeart size={25} className="shrink-0" />
               </button>
@@ -274,17 +337,27 @@ export default function Header() {
                 }
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
-                  {cartItems.length || 0}
+                  {cart_products.length || 0}
                 </span>
                 <PiShoppingCartSimpleBold size={25} className="shrink-0" />
               </button>
 
-              <Link
-                to="/profile"
-                className="p-2 border rounded-3xl hover:text-pink"
-              >
+              <span className="relative p-2 border rounded-3xl hover:text-pink group">
                 <FaRegUser size={25} className="shrink-0" />
-              </Link>
+
+                <div className="absolute top-10 right-0 hidden group-hover:flex flex-col bg-white rounded shadow-[0px_0px_10px_1px_rgb(0,0,0,0.1)] overflow-hidden text-nowrap">
+                  {PROFILE_ITEMS.map(({ id, onClick, label, icon }) => (
+                    <button
+                      key={id}
+                      onClick={onClick}
+                      className="flex items-center gap-2 px-5 py-1 text-black text-sm hover:bg-pink hover:text-white"
+                    >
+                      {icon}
+                      <span>{label}</span>
+                    </button>
+                  ))}
+                </div>
+              </span>
             </div>
           </div>
         </div>

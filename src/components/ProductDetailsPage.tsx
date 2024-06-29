@@ -109,7 +109,9 @@ export default function ProductDetailsPage(props: Props) {
   } = product;
 
   const {
-    appState: { favoriteItems, cartItems },
+    appState: {
+      user: { cart_products, favorite_products },
+    },
     setAppState,
   } = useStore();
 
@@ -132,20 +134,23 @@ export default function ProductDetailsPage(props: Props) {
       const selectedProductId =
         product.id + product.product_type! + selectedAttributes.size;
 
-      if (cartItems.map(({ id }) => id).includes(selectedProductId)) {
+      if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
         addToCartUnsuccessModalRef.current?.open();
       } else {
         setAppState((prev) => ({
           ...prev,
-          cartItems: [
-            ...prev.cartItems,
-            {
-              ...product,
-              id: selectedProductId,
-              selectedQuantity: selectedAttributes.quantity,
-              selectedSize: selectedAttributes.size,
-            },
-          ],
+          user: {
+            ...prev.user,
+            favorite_products: [
+              ...prev.user.favorite_products,
+              {
+                ...product,
+                id: selectedProductId,
+                selectedQuantity: selectedAttributes.quantity,
+                selectedSize: selectedAttributes.size,
+              },
+            ],
+          },
         }));
         addToCartSuccessModalRef.current?.open();
       }
@@ -155,20 +160,23 @@ export default function ProductDetailsPage(props: Props) {
   const handleAddProductToFavorite = () => {
     const selectedProductId = product.id + product.product_type!;
 
-    if (favoriteItems.map(({ id }) => id).includes(selectedProductId)) {
+    if (favorite_products.map(({ id }) => id).includes(selectedProductId)) {
       //
     } else {
       setAppState((prev) => ({
         ...prev,
-        favoriteItems: [
-          ...prev.favoriteItems,
-          {
-            ...product,
-            id: selectedProductId,
-            selectedQuantity: selectedAttributes.quantity,
-            selectedSize: selectedAttributes.size,
-          },
-        ],
+        user: {
+          ...prev.user,
+          cart_products: [
+            ...prev.user.cart_products,
+            {
+              ...product,
+              id: selectedProductId,
+              selectedQuantity: selectedAttributes.quantity,
+              selectedSize: selectedAttributes.size,
+            },
+          ],
+        },
       }));
       addToFavoriteSuccessModalRef.current?.open();
     }

@@ -25,6 +25,8 @@ import { getClothes, getRacketsAndShoes } from "./services/productsAction";
 import SearchResults from "./pages/SearchResults";
 import News from "./pages/News";
 import Contact from "./pages/Contact";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 function App() {
   const { setAppState } = useStore();
@@ -39,6 +41,7 @@ function App() {
       const res = await getClothes();
       setAppState((prev) => ({ ...prev, clothes: res }));
     })();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -47,6 +50,8 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/sign-up" element={<SignUp />} />
         <Route path="/products" element={<Outlet />}>
           <Route path="" element={<Navigate to="/products/rackets" />} />
           <Route path="rackets" element={<Rackets />} />
