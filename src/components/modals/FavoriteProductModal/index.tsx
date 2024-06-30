@@ -1,8 +1,9 @@
-// import { IoClose } from "react-icons/io5";
+import { useState } from "react";
 
 import { useStore } from "@/context/Store";
 import SlideModal from "@/components/modals/SlideModal";
 import ProductCard from "./ProductCard";
+import ComponentSpinner from "@/components/loading/ComponentSpinner";
 
 export default function FavoriteProductsModal() {
   const {
@@ -12,6 +13,8 @@ export default function FavoriteProductsModal() {
     },
     setAppState,
   } = useStore();
+
+  const [loading, setLoading] = useState(false);
 
   const handleCloseModal = () => {
     setAppState((prev) => ({ ...prev, isFavoriteModalOpen: false }));
@@ -31,11 +34,17 @@ export default function FavoriteProductsModal() {
         </h2>
       }
     >
-      <div className="space-y-2 overflow-y-scroll h-[calc(100vh-108px)] scrollbar-hide">
-        {favorite_products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      <ComponentSpinner isLoading={loading}>
+        <div className="space-y-2 overflow-y-scroll h-[calc(100vh-108px)] scrollbar-hide">
+          {favorite_products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              setLoading={setLoading}
+            />
+          ))}
+        </div>
+      </ComponentSpinner>
     </SlideModal>
   );
 }

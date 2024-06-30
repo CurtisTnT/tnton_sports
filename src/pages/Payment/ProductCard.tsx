@@ -12,11 +12,10 @@ import { useStore } from "@/context/Store";
 
 type Props = {
   product: Product;
-  setLoading: (loading: boolean) => void;
 };
 
 export default function ProductCard(props: Props) {
-  const { product, setLoading } = props;
+  const { product } = props;
   const {
     id,
     image_url,
@@ -64,18 +63,14 @@ export default function ProductCard(props: Props) {
 
     if (!isDelete) return;
 
-    setLoading(true);
-    (async () => {
-      const res = await updateUser({
-        ...user,
-        cart_products: user.cart_products.filter((prod) => prod.id !== id),
-      });
+    const res = await updateUser({
+      ...user,
+      cart_products: user.cart_products.filter((prod) => prod.id !== id),
+    });
 
-      if (res) {
-        setAppState((prev) => ({ ...prev, user: res }));
-        setLoading(true);
-      }
-    })();
+    if (res) {
+      setAppState((prev) => ({ ...prev, user: res }));
+    }
   };
 
   const renderSelectSize = (opts: {

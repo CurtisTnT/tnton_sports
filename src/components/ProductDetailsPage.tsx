@@ -4,6 +4,7 @@ import { TfiClose } from "react-icons/tfi";
 import { MdLabel } from "react-icons/md";
 import { GiCheckMark } from "react-icons/gi";
 import { PiShieldCheckFill } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
 
 import { Product } from "@/services/interface";
 import { Brand } from "@/constants/brand";
@@ -15,7 +16,6 @@ import { ProductTypeType } from "@/constants/productType";
 import { Store } from "@/constants/store";
 import StoreList from "./StoreList";
 import Modal, { ModalRef } from "./modals/Modal";
-
 import AddToCartButton from "./buttons/AddToCartButton";
 import BuyNowButton from "./buttons/BuyNowButton";
 import AddToFavoriteButton from "./buttons/AddToFavoriteButton";
@@ -23,6 +23,9 @@ import { useStore } from "@/context/Store";
 import AddToCartSuccessModal from "./modals/AddToCartSuccessModal";
 import AddToFavoriteSuccessModal from "./modals/AddToFavoriteSuccessModal";
 import AddToCartUnsuccessModal from "./modals/AddToCartUnsuccessModal";
+import Toast from "./Toast";
+import { updateUser } from "@/services/userAction";
+import AddToFavoriteUnsuccessModal from "./modals/AddToFavoriteUnsuccessModal";
 
 type Props = {
   product: Product;
@@ -109,11 +112,12 @@ export default function ProductDetailsPage(props: Props) {
   } = product;
 
   const {
-    appState: {
-      user: { cart_products, favorite_products },
-    },
+    appState: { user },
     setAppState,
   } = useStore();
+  const { id: userId, cart_products, favorite_products } = user;
+
+  const navigate = useNavigate();
 
   const [previewImg, setPreviewImg] = useState("");
   const [selectedAttributes, setSelectedAttributes] = useState<{
@@ -124,61 +128,89 @@ export default function ProductDetailsPage(props: Props) {
 
   const zoomImgModalRef = useRef<ModalRef>(null);
   const addToCartSuccessModalRef = useRef<ModalRef>(null);
-  const addToFavoriteSuccessModalRef = useRef<ModalRef>(null);
   const addToCartUnsuccessModalRef = useRef<ModalRef>(null);
+  const addToFavoriteSuccessModalRef = useRef<ModalRef>(null);
+  const addToFavoriteUnsuccessModalRef = useRef<ModalRef>(null);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (!userId) {
+      Toast({
+        type: "info",
+        message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+      });
+      navigate("/sign-in");
+      return;
+    }
+
     if (!selectedAttributes.size && product_type !== "racket") {
-      setError("Vui lòng chọn size");
-    } else {
-      const selectedProductId =
-        product.id + product.product_type! + selectedAttributes.size;
+      setError("Vui lòng chọn size!");
+      return;
+    }
 
-      if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
-        addToCartUnsuccessModalRef.current?.open();
-      } else {
+    const selectedProductId =
+      product.id + " " + product.product_type! + selectedAttributes.size;
+
+    if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
+      addToCartUnsuccessModalRef.current?.open();
+    } else {
+      const res = await updateUser({
+        ...user,
+        cart_products: [
+          ...user.cart_products,
+          {
+            ...product,
+            id: selectedProductId,
+            selectedQuantity: selectedAttributes.quantity,
+            selectedSize: selectedAttributes.size,
+          },
+        ],
+      });
+
+      if (res) {
         setAppState((prev) => ({
           ...prev,
-          user: {
-            ...prev.user,
-            favorite_products: [
-              ...prev.user.favorite_products,
-              {
-                ...product,
-                id: selectedProductId,
-                selectedQuantity: selectedAttributes.quantity,
-                selectedSize: selectedAttributes.size,
-              },
-            ],
-          },
+          user: res,
         }));
         addToCartSuccessModalRef.current?.open();
       }
     }
   };
 
-  const handleAddProductToFavorite = () => {
-    const selectedProductId = product.id + product.product_type!;
+  const handleAddProductToFavorite = async () => {
+    if (!userId) {
+      Toast({
+        type: "info",
+        message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+      });
+      navigate("/sign-in");
+      return;
+    }
+
+    const selectedProductId = product.id + " " + product.product_type!;
 
     if (favorite_products.map(({ id }) => id).includes(selectedProductId)) {
-      //
+      addToFavoriteUnsuccessModalRef.current?.open();
     } else {
-      setAppState((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          cart_products: [
-            ...prev.user.cart_products,
-            {
-              ...product,
-              id: selectedProductId,
-              selectedQuantity: selectedAttributes.quantity,
-              selectedSize: selectedAttributes.size,
-            },
-          ],
-        },
-      }));
-      addToFavoriteSuccessModalRef.current?.open();
+      const res = await updateUser({
+        ...user,
+        favorite_products: [
+          ...user.favorite_products,
+          {
+            ...product,
+            id: selectedProductId,
+            selectedQuantity: selectedAttributes.quantity,
+            selectedSize: selectedAttributes.size,
+          },
+        ],
+      });
+
+      if (res) {
+        setAppState((prev) => ({
+          ...prev,
+          user: res,
+        }));
+        addToFavoriteSuccessModalRef.current?.open();
+      }
     }
   };
 
@@ -447,15 +479,20 @@ export default function ProductDetailsPage(props: Props) {
         onClose={() => addToCartSuccessModalRef.current?.close()}
       />
 
+      <AddToCartUnsuccessModal
+        addToCartUnsuccessModalRef={addToCartUnsuccessModalRef}
+        onClose={() => addToCartUnsuccessModalRef.current?.close()}
+      />
+
       <AddToFavoriteSuccessModal
         addToFavoriteSuccessModalRef={addToFavoriteSuccessModalRef}
         product={product}
         onClose={() => addToFavoriteSuccessModalRef.current?.close()}
       />
 
-      <AddToCartUnsuccessModal
-        addToCartUnsuccessModalRef={addToCartUnsuccessModalRef}
-        onClose={() => addToCartUnsuccessModalRef.current?.close()}
+      <AddToFavoriteUnsuccessModal
+        addToFavoriteUnsuccessModalRef={addToFavoriteUnsuccessModalRef}
+        onClose={() => addToFavoriteUnsuccessModalRef.current?.close()}
       />
     </ContentContainer>
   );

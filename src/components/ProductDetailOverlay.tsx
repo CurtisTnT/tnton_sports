@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "@/context/Store";
 import { ModalRef } from "./modals/Modal";
 import AddToFavoriteSuccessModal from "./modals/AddToFavoriteSuccessModal";
+import AddToFavoriteUnsuccessModal from "./modals/AddToFavoriteUnsuccessModal";
+import Toast from "./Toast";
+import { updateUser } from "@/services/userAction";
 
 type Props = {
   product: Product;
@@ -18,15 +21,15 @@ export default function ProductDetailOverlay(props: Props) {
   const { product, onSeeDetailProduct } = props;
 
   const {
-    appState: {
-      user: { favorite_products },
-    },
+    appState: { user },
     setAppState,
   } = useStore();
+  const { id: userId, favorite_products } = user;
 
   const navigate = useNavigate();
 
   const addToFavoriteSuccessModalRef = useRef<ModalRef>(null);
+  const addToFavoriteUnsuccessModalRef = useRef<ModalRef>(null);
 
   const handleGoToDetailProduct = () => {
     let path = "";
@@ -50,26 +53,39 @@ export default function ProductDetailOverlay(props: Props) {
     navigate(`/products/${path}/${product.id}`);
   };
 
-  const handleAddProductToFavorite = () => {
-    const selectedProductId = product.id + product.product_type!;
+  const handleAddProductToFavorite = async () => {
+    if (!userId) {
+      Toast({
+        type: "info",
+        message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+      });
+      navigate("/sign-in");
+      return;
+    }
+
+    const selectedProductId = product.id + " " + product.product_type!;
 
     if (favorite_products.map(({ id }) => id).includes(selectedProductId)) {
-      //
+      addToFavoriteUnsuccessModalRef.current?.open();
     } else {
-      setAppState((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          favorite_products: [
-            ...prev.user.favorite_products,
-            {
-              ...product,
-              id: selectedProductId,
-            },
-          ],
-        },
-      }));
-      addToFavoriteSuccessModalRef.current?.open();
+      const res = await updateUser({
+        ...user,
+        favorite_products: [
+          ...user.favorite_products,
+          {
+            ...product,
+            id: selectedProductId,
+          },
+        ],
+      });
+
+      if (res) {
+        setAppState((prev) => ({
+          ...prev,
+          user: res,
+        }));
+        addToFavoriteSuccessModalRef.current?.open();
+      }
     }
   };
 
@@ -95,6 +111,11 @@ export default function ProductDetailOverlay(props: Props) {
         addToFavoriteSuccessModalRef={addToFavoriteSuccessModalRef}
         product={product}
         onClose={() => addToFavoriteSuccessModalRef.current?.close()}
+      />
+
+      <AddToFavoriteUnsuccessModal
+        addToFavoriteUnsuccessModalRef={addToFavoriteUnsuccessModalRef}
+        onClose={() => addToFavoriteUnsuccessModalRef.current?.close()}
       />
     </>
   );

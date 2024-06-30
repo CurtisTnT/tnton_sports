@@ -75,3 +75,13 @@ export const signUp = async (args: {
     }
   }
 };
+
+export const updateUser = async (args: User): Promise<User | undefined> => {
+  try {
+    const res = await apiClient2.put(`/users/${args.id}`, args);
+
+    return res.data;
+  } catch (error: any) {
+    console.log(new Error(error));
+  }
+};

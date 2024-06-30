@@ -18,6 +18,7 @@ import { useStore } from "@/context/Store";
 import SearchProductModal from "@/components/modals/SearchProductModal";
 import { stores } from "@/constants/store";
 import { initialUser } from "@/services/initialState";
+import Toast from "../Toast";
 
 const PRODUCT_NAV_ITEMS = [
   {
@@ -115,7 +116,10 @@ export default function Header() {
         {
           id: 1,
           label: "Đăng nhập",
-          onClick: () => navigate("/sign-in"),
+          onClick: () => {
+            navigate("/sign-in");
+            Toast({ type: "success", message: "Đăng xuất thành công!" });
+          },
           icon: <IoIosLogIn size={18} />,
         },
         {
@@ -316,12 +320,20 @@ export default function Header() {
               <button
                 type="button"
                 className="relative p-2 border rounded-3xl hover:text-pink"
-                onClick={() =>
-                  setAppState((prev) => ({
-                    ...prev,
-                    isFavoriteModalOpen: true,
-                  }))
-                }
+                onClick={() => {
+                  if (id) {
+                    setAppState((prev) => ({
+                      ...prev,
+                      isFavoriteModalOpen: true,
+                    }));
+                  } else {
+                    Toast({
+                      type: "info",
+                      message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+                    });
+                    navigate("/sign-in");
+                  }
+                }}
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
                   {favorite_products.length || 0}
@@ -332,9 +344,20 @@ export default function Header() {
               <button
                 type="button"
                 className="relative p-2 border rounded-3xl hover:text-pink"
-                onClick={() =>
-                  setAppState((prev) => ({ ...prev, isCartModalOpen: true }))
-                }
+                onClick={() => {
+                  if (id) {
+                    setAppState((prev) => ({
+                      ...prev,
+                      isCartModalOpen: true,
+                    }));
+                  } else {
+                    Toast({
+                      type: "info",
+                      message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+                    });
+                    navigate("/sign-in");
+                  }
+                }}
               >
                 <span className="absolute -top-1.5 right-0 min-w-4 h-4 text-center text-xs text-white rounded-lg bg-pink">
                   {cart_products.length || 0}

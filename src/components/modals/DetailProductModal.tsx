@@ -2,6 +2,7 @@ import { Ref, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { TfiClose } from "react-icons/tfi";
 import { MdLabel } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 import Modal, { ModalRef } from "./Modal";
 import { Product } from "@/services/interface";
@@ -14,8 +15,9 @@ import BuyNowButton from "@/components/buttons/BuyNowButton";
 import AddToCartButton from "@/components/buttons/AddToCartButton";
 import AddToFavoriteButton from "@/components/buttons/AddToFavoriteButton";
 import AddToCartSuccessModal from "./AddToCartSuccessModal";
-import AddToFavoriteSuccessModal from "./AddToFavoriteSuccessModal";
 import AddToCartUnsuccessModal from "./AddToCartUnsuccessModal";
+import Toast from "@/components/Toast";
+import { updateUser } from "@/services/userAction";
 
 type Props = {
   detailProductModalRef: Ref<ModalRef>;
@@ -39,11 +41,12 @@ export default function DetailProductModal(props: Props) {
   } = selectedProduct;
 
   const {
-    appState: {
-      user: { cart_products },
-    },
+    appState: { user },
     setAppState,
   } = useStore();
+  const { id: userId, cart_products, favorite_products } = user;
+
+  const navigate = useNavigate();
 
   const [previewImg, setPreviewImg] = useState("");
   const [selectedAttributes, setSelectedAttributes] = useState<{
@@ -53,7 +56,6 @@ export default function DetailProductModal(props: Props) {
   const [error, setError] = useState("");
 
   const addToCartSuccessModalRef = useRef<ModalRef>(null);
-  const addToFavoriteSuccessModalRef = useRef<ModalRef>(null);
   const addToCartUnsuccessModalRef = useRef<ModalRef>(null);
 
   const resetState = () => {
@@ -61,54 +63,109 @@ export default function DetailProductModal(props: Props) {
     setError("");
   };
 
-  const handleAddToCart = () => {
-    if (!selectedAttributes.size && product_type !== "racket") {
-      setError("Vui lòng chọn size");
-    } else {
-      const selectedProductId =
-        selectedProduct.id +
-        selectedProduct.product_type! +
-        selectedAttributes.size;
-
-      if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
-        addToCartUnsuccessModalRef.current?.open();
-      } else {
-        setAppState((prev) => ({
-          ...prev,
-          user: {
-            ...prev.user,
-            cart_products: [
-              ...prev.user.cart_products,
-              {
-                ...selectedProduct,
-                id: selectedProductId,
-                selectedQuantity: selectedAttributes.quantity,
-                selectedSize: selectedAttributes.size,
-              },
-            ],
-          },
-        }));
-        addToCartSuccessModalRef.current?.open();
-      }
+  const handleAddToCart = async () => {
+    if (!userId) {
+      Toast({
+        type: "info",
+        message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+      });
+      navigate("/sign-in");
+      return;
     }
-  };
 
-  const handleAddProductToFavorite = () => {
-    setAppState((prev) => ({
-      ...prev,
-      user: {
-        ...prev.user,
-        favorite_products: [
-          ...prev.user.favorite_products,
+    if (!selectedAttributes.size && product_type !== "racket") {
+      setError("Vui lòng chọn size!");
+      return;
+    }
+
+    const selectedProductId =
+      selectedProduct.id +
+      " " +
+      selectedProduct.product_type! +
+      selectedAttributes.size;
+
+    if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
+      Toast({
+        type: "error",
+        message:
+          "Sản phẩm này đang có trong giỏ hàng của bạn. Vui lòng chọn size hoặc sản phẩm khác!",
+      });
+      // addToCartUnsuccessModalRef.current?.open();
+    } else {
+      const res = await updateUser({
+        ...user,
+        cart_products: [
+          ...user.cart_products,
           {
             ...selectedProduct,
+            id: selectedProductId,
             selectedQuantity: selectedAttributes.quantity,
             selectedSize: selectedAttributes.size,
           },
         ],
-      },
-    }));
-    addToFavoriteSuccessModalRef.current?.open();
+      });
+
+      if (res) {
+        setAppState((prev) => ({
+          ...prev,
+          user: res,
+        }));
+
+        Toast({
+          type: "success",
+          message: "Thêm sản phẩm vào giỏ hàng thành công!",
+        });
+        onClose();
+      }
+    }
+  };
+
+  const handleAddProductToFavorite = async () => {
+    if (!userId) {
+      Toast({
+        type: "info",
+        message: "Bạn cần đăng nhập để sử dụng tính năng này!",
+      });
+      navigate("/sign-in");
+      return;
+    }
+
+    const selectedProductId =
+      selectedProduct.id + " " + selectedProduct.product_type!;
+
+    if (favorite_products.map(({ id }) => id).includes(selectedProductId)) {
+      Toast({
+        type: "error",
+        message:
+          "Sản phẩm này đang có trong danh mục yêu thích của bạn. Vui lòng chọn sản phẩm khác!",
+      });
+    } else {
+      const res = await updateUser({
+        ...user,
+        favorite_products: [
+          ...user.favorite_products,
+          {
+            ...selectedProduct,
+            id: selectedProductId,
+            selectedQuantity: selectedAttributes.quantity,
+            selectedSize: selectedAttributes.size,
+          },
+        ],
+      });
+
+      if (res) {
+        setAppState((prev) => ({
+          ...prev,
+          user: res,
+        }));
+
+        Toast({
+          type: "success",
+          message: "Thêm sản phẩm vào danh mục yêu thích thành công!",
+        });
+        onClose();
+      }
+    }
   };
 
   useEffect(() => {
@@ -318,12 +375,6 @@ export default function DetailProductModal(props: Props) {
           addToCartSuccessModalRef.current?.close();
           onClose();
         }}
-      />
-
-      <AddToFavoriteSuccessModal
-        addToFavoriteSuccessModalRef={addToFavoriteSuccessModalRef}
-        product={selectedProduct}
-        onClose={() => addToFavoriteSuccessModalRef.current?.close()}
       />
 
       <AddToCartUnsuccessModal

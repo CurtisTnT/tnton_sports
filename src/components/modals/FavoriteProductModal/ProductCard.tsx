@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import clsx from "clsx";
 import { MdLabel } from "react-icons/md";
+import { BsTrash } from "react-icons/bs";
+import { Link } from "react-router-dom";
 
 import AddToCartButton from "@/components/buttons/AddToCartButton";
 import { clothesSizes } from "@/constants/clothesSize";
@@ -10,13 +12,16 @@ import { formatVndCurrency } from "@/utils/helpers";
 import { useStore } from "@/context/Store";
 import { ModalRef } from "../Modal";
 import AddToCartSuccessModal from "@/components/modals/AddToCartSuccessModal";
+import { updateUser } from "@/services/userAction";
+import Toast from "@/components/Toast";
 
 type Props = {
   product: Product;
+  setLoading: (loading: boolean) => void;
 };
 
 export default function ProductCard(props: Props) {
-  const { product } = props;
+  const { product, setLoading } = props;
   const {
     id,
     image_url,
@@ -31,7 +36,11 @@ export default function ProductCard(props: Props) {
     selectedSize,
   } = product;
 
-  const { setAppState } = useStore();
+  const {
+    appState: { user },
+    setAppState,
+  } = useStore();
+  const { cart_products } = user;
 
   const [selectedAttributes, setSelectedAttributes] = useState<{
     size: string;
@@ -39,27 +48,86 @@ export default function ProductCard(props: Props) {
   }>({ size: selectedSize || "", quantity: selectedQuantity || 1 });
   const [error, setError] = useState("");
 
+  let url = "";
+  switch (product_type) {
+    case "racket":
+      url = "rackets";
+      break;
+    case "shirt":
+      url = "shirts";
+      break;
+    case "dress":
+      url = "dresses";
+      break;
+    default:
+      url = product_type!;
+      break;
+  }
+
   const addToCartSuccessModalRef = useRef<ModalRef>(null);
 
-  const handleAddToCart = () => {
+  const handleRemoveProductFromFavorite = async () => {
+    const isDelete = confirm(
+      `Bạn có muốn xoá ${product.name} ra khỏi danh mục yêu thích!`
+    );
+
+    if (!isDelete) return;
+
+    setLoading(true);
+    (async () => {
+      const res = await updateUser({
+        ...user,
+        favorite_products: user.favorite_products.filter(
+          (prod) => prod.id !== id
+        ),
+      });
+
+      if (res) {
+        setAppState((prev) => ({ ...prev, user: res }));
+        setLoading(false);
+      }
+    })();
+  };
+
+  const handleAddToCart = async () => {
     if (!selectedAttributes.size && product_type !== "racket") {
       setError("Vui lòng chọn size");
     } else {
-      setAppState((prev) => ({
-        ...prev,
-        user: {
-          ...prev.user,
-          cart_products: [
-            ...prev.user.cart_products,
-            {
-              ...product,
-              selectedQuantity: selectedAttributes.quantity,
-              selectedSize: selectedAttributes.size,
-            },
-          ],
-        },
-      }));
-      addToCartSuccessModalRef.current?.open();
+      const selectedProductId =
+        product.id + " " + product.product_type! + selectedAttributes.size;
+
+      if (cart_products.map(({ id }) => id).includes(selectedProductId)) {
+        Toast({
+          type: "error",
+          message:
+            "Sản phẩm này đang có trong giỏ hàng của bạn. Vui lòng chọn size hoặc sản phẩm khác!",
+        });
+      } else {
+        setLoading(true);
+        (async () => {
+          const res = await updateUser({
+            ...user,
+            cart_products: [
+              ...user.cart_products,
+              {
+                ...product,
+                id: selectedProductId,
+                selectedQuantity: selectedAttributes.quantity,
+                selectedSize: selectedAttributes.size,
+              },
+            ],
+          });
+
+          if (res) {
+            setAppState((prev) => ({ ...prev, user: res }));
+            Toast({
+              type: "success",
+              message: "Thêm sản phẩm vào giỏ hàng thành công!",
+            });
+            setLoading(false);
+          }
+        })();
+      }
     }
   };
 
@@ -103,9 +171,15 @@ export default function ProductCard(props: Props) {
 
   return (
     <>
-      <div key={id} className="flex p-2 gap-2 border border-pink rounded">
-        <button
-          type="button"
+      <div
+        key={id}
+        className="relative flex p-2 gap-2 border border-pink rounded"
+      >
+        <Link
+          to={`/products/${url}/${id.toString().split(" ")[0]}`}
+          onClick={() =>
+            setAppState((prev) => ({ ...prev, isCartModalOpen: false }))
+          }
           className="relative h-[200px] w-[200px] rounded shadow-[0px_0px_10px_1px_rgb(0,0,0,0.1)] shrink-0 overflow-hidden"
         >
           <img
@@ -125,13 +199,19 @@ export default function ProductCard(props: Props) {
               </div>
             </div>
           )}
-        </button>
+        </Link>
 
         <div className="flex flex-col flex-grow justify-between">
           <div>
-            <button type="button" className="text-start font-bold">
+            <Link
+              to={`/products/${url}/${id.toString().split(" ")[0]}`}
+              onClick={() =>
+                setAppState((prev) => ({ ...prev, isCartModalOpen: false }))
+              }
+              className="text-start font-bold"
+            >
               {name}
-            </button>
+            </Link>
 
             <p className="font-bold text-pink">
               {formatVndCurrency(price)}{" "}
@@ -214,6 +294,14 @@ export default function ProductCard(props: Props) {
 
           <AddToCartButton className="self-start" onClick={handleAddToCart} />
         </div>
+
+        <button
+          type="button"
+          className="absolute bottom-2 right-2 text-red-500"
+          onClick={handleRemoveProductFromFavorite}
+        >
+          <BsTrash size={18} />
+        </button>
       </div>
 
       <AddToCartSuccessModal

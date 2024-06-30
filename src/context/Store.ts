@@ -1,5 +1,5 @@
 import { initialUser } from "@/services/initialState";
-import { Clothes,  RacketShoes, User } from "@/services/interface";
+import { Clothes, RacketShoes, User } from "@/services/interface";
 import { Dispatch, createContext, useContext } from "react";
 
 export type AppState = {

@@ -4,7 +4,7 @@ import { IoClose } from "react-icons/io5";
 
 type Props = {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | "info";
 };
 
 export default function Toast({
@@ -18,6 +18,7 @@ export default function Toast({
         className={clsx("absolute top-0 left-0 h-full w-[5px]", {
           "bg-[#1FD286]": type === "success",
           "bg-[#F04438]": type === "error",
+          "bg-[#3b74b2]": type === "info",
         })}
       />
       <div className="text-black space-y-1">
@@ -30,7 +31,7 @@ export default function Toast({
   return toast(Content(), {
     hideProgressBar: true,
     autoClose: 3000,
-    bodyStyle: { padding: 8, marginRight: 20 },
+    bodyStyle: { padding: 8, marginRight: 20, zIndex: 99999 },
     closeButton: ({ closeToast }) => (
       <button
         onClick={closeToast}

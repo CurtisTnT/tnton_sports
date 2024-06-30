@@ -1,9 +1,15 @@
+import { useNavigate } from "react-router-dom";
+
 import { useStore } from "@/context/Store";
 import SlideModal from "@/components/modals/SlideModal";
 import ProductCard from "./ProductCard";
 import { formatVndCurrency } from "@/utils/helpers";
+import { useState } from "react";
+import ComponentSpinner from "@/components/loading/ComponentSpinner";
 
 export default function CartModal() {
+  const navigate = useNavigate();
+
   const {
     appState: {
       isCartModalOpen,
@@ -11,6 +17,8 @@ export default function CartModal() {
     },
     setAppState,
   } = useStore();
+
+  const [loading, setLoading] = useState(false);
 
   const totalPrice = cart_products.reduce(
     (acc, { price }) => (acc += price),
@@ -56,14 +64,23 @@ export default function CartModal() {
             <button
               type="button"
               className="py-2 px-5 bg-white border border-pink rounded-lg text-sm text-pink font-semibold hover:text-white hover:bg-pink"
-              onClick={() => {}}
+              onClick={() =>
+                setAppState((prev) => ({
+                  ...prev,
+                  isCartModalOpen: false,
+                }))
+              }
             >
               Tiếp tục mua sắm
             </button>
             <button
               type="button"
-              className="py-2 px-5 bg-pink border border-pink rounded-lg text-sm text-white font-semibold hover:text-pink hover:bg-white"
-              onClick={() => {}}
+              className="py-2 px-5 bg-pink border border-pink rounded-lg text-sm text-white font-semibold hover:text-pink hover:bg-white disabled:opacity-50 disabled:hover:text-white disabled:hover:bg-pink"
+              onClick={() => {
+                setAppState((prev) => ({ ...prev, isCartModalOpen: false }));
+                navigate("/payment");
+              }}
+              disabled={!cart_products.length}
             >
               Thanh toán
             </button>
@@ -71,11 +88,17 @@ export default function CartModal() {
         </>
       }
     >
-      <div className="space-y-2 overflow-y-scroll h-[calc(100vh-236px)] scrollbar-hide">
-        {cart_products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      <ComponentSpinner isLoading={loading}>
+        <div className="space-y-2 overflow-y-scroll h-[calc(100vh-236px)] scrollbar-hide">
+          {cart_products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              setLoading={setLoading}
+            />
+          ))}
+        </div>
+      </ComponentSpinner>
     </SlideModal>
   );
 }

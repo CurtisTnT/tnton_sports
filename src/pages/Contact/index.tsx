@@ -1,7 +1,9 @@
 import { useState } from "react";
+import clsx from "clsx";
 import emailjs from "emailjs-com";
 
 import ContentContainer from "@/components/layouts/ContentContainer";
+import ComponentSpinner from "@/components/loading/ComponentSpinner";
 
 type FormData = {
   name: string;
@@ -18,12 +20,18 @@ export default function Contact() {
     content: "",
   };
   const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ phone: string; email: string }>({
+    phone: "",
+    email: "",
+  });
 
   const handleChangeFormData = (values: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...values }));
   };
 
   const handleSubmitEmail = () => {
+    setLoading(true);
     emailjs
       .send(
         "service_9q52aul",
@@ -33,9 +41,11 @@ export default function Contact() {
       )
       .then(() => {
         setFormData(initialFormData);
+        setLoading(false);
         alert("Email sent successfully");
       })
       .catch((error) => {
+        setLoading(false);
         alert("Error sending email: " + error);
       });
   };
@@ -43,49 +53,82 @@ export default function Contact() {
   return (
     <ContentContainer>
       <div className="flex flex-col mt-10 items-center">
-        <h1 className="text-xl uppercase font-bold">Liên hệ với chúng tôi</h1>
+        <ComponentSpinner isLoading={loading}>
+          <h1 className="text-xl uppercase font-bold">Liên hệ với chúng tôi</h1>
 
-        <div className="my-5 flex flex-col gap-3 text-sm">
-          <input
-            type="text"
-            className="w-full px-4 py-2 border rounded-lg"
-            value={formData.name}
-            onChange={(e) => handleChangeFormData({ name: e.target.value })}
-            placeholder="Họ và tên"
-          />
+          <div className="my-5 flex flex-col text-sm">
+            <input
+              type="text"
+              className="w-full mb-4 px-4 py-2 border rounded-lg"
+              value={formData.name}
+              onChange={(e) => handleChangeFormData({ name: e.target.value })}
+              placeholder="Họ và tên"
+            />
+            <div className="flex items-center gap-4">
+              <div className="w-[300px]">
+                <input
+                  type="tel"
+                  className="w-full px-4 py-2 border rounded-lg"
+                  value={formData.phone}
+                  onChange={(e) => {
+                    handleChangeFormData({ phone: e.target.value });
+                    setErrors({ ...errors, phone: "" });
+                  }}
+                  placeholder="Số điện thoại"
+                />
+                <p
+                  className={clsx("min-h-4 text-red-500 text-xs", {
+                    invisible: !errors.phone,
+                  })}
+                >
+                  {errors.phone}
+                </p>
+              </div>
+              <div className="w-[300px]">
+                <input
+                  type="email"
+                  className="w-full px-4 py-2 border rounded-lg"
+                  value={formData.email}
+                  onChange={(e) => {
+                    handleChangeFormData({ email: e.target.value });
+                    setErrors({ ...errors, email: "" });
+                  }}
+                  placeholder="Email"
+                />
+                <p
+                  className={clsx("min-h-4 text-red-500 text-xs", {
+                    invisible: !errors.email,
+                  })}
+                >
+                  {errors.email}
+                </p>
+              </div>
+            </div>
 
-          <div className="flex items-center gap-4">
-            <input
-              type="tel"
-              className="w-[300px] px-4 py-2 border rounded-lg"
-              value={formData.phone}
-              onChange={(e) => handleChangeFormData({ phone: e.target.value })}
-              placeholder="Điện thoại"
+            <textarea
+              className="w-full min-h-[100px] mb-4 px-4 py-2 border rounded-lg"
+              value={formData.content}
+              onChange={(e) =>
+                handleChangeFormData({ content: e.target.value })
+              }
+              placeholder="Nội dung"
             />
-            <input
-              type="email"
-              className="w-[300px] px-4 py-2 border rounded-lg"
-              value={formData.email}
-              onChange={(e) => handleChangeFormData({ email: e.target.value })}
-              placeholder="Email"
-            />
+
+            <button
+              type="submit"
+              className="self-center py-2 px-5 rounded bg-pink text-white font-bold hover:scale-110 duration-300 disabled:opacity-50 disabled:hover:text-white disabled:hover:bg-pink"
+              onClick={handleSubmitEmail}
+              disabled={
+                !formData.content ||
+                !formData.email ||
+                !formData.name ||
+                !formData.phone
+              }
+            >
+              Gửi thông tin
+            </button>
           </div>
-
-          <textarea
-            className="w-full min-h-[100px] px-4 py-2 border rounded-lg"
-            value={formData.content}
-            onChange={(e) => handleChangeFormData({ content: e.target.value })}
-            placeholder="Nội dung"
-          />
-
-          <button
-            type="submit"
-            className="self-center p-2 rounded bg-pink text-white font-bold hover:scale-110 duration-300"
-            onClick={handleSubmitEmail}
-          >
-            Gửi thông tin
-          </button>
-        </div>
+        </ComponentSpinner>
       </div>
     </ContentContainer>
   );

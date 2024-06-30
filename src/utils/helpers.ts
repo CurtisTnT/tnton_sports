@@ -1,3 +1,5 @@
+import { User } from "@/services/interface";
+
 export const formatVndCurrency = (cur: number) => {
   return new Intl.NumberFormat("vi-VI", {
     style: "currency",
@@ -26,4 +28,14 @@ export const validatePhoneNumber = (phoneNumber: string) => {
 export const validateEmail = (email: string) => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailPattern.test(email);
+};
+
+const USER_KEY = "user";
+
+export const setUserInLocalStorage = (value: User) => {
+  localStorage.setItem(USER_KEY, JSON.stringify(value));
+};
+
+export const getUserFromLocalStorage = () => {
+  localStorage.getItem(USER_KEY);
 };

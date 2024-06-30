@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -20,13 +21,13 @@ import DressesDetails from "./pages/Products/Dresses/Details";
 import FavoriteProductsModal from "./components/modals/FavoriteProductModal";
 import CartModal from "./components/modals/CartModal";
 import { useStore } from "./context/Store";
-import { useEffect } from "react";
 import { getClothes, getRacketsAndShoes } from "./services/productsAction";
 import SearchResults from "./pages/SearchResults";
 import News from "./pages/News";
 import Contact from "./pages/Contact";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import Payment from "./pages/Payment";
 
 function App() {
   const { setAppState } = useStore();
@@ -73,6 +74,7 @@ function App() {
         <Route path="/search-results" element={<SearchResults />} />
         <Route path="/news" element={<News />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/payment" element={<Payment />} />
         <Route path="*" element={<h1>404 Page not found!</h1>} />
       </Routes>
 
