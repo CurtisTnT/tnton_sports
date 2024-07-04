@@ -90,13 +90,17 @@ export default function CartModal() {
     >
       <ComponentSpinner isLoading={loading}>
         <div className="space-y-2 overflow-y-scroll h-[calc(100vh-236px)] scrollbar-hide">
-          {cart_products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              setLoading={setLoading}
-            />
-          ))}
+          {cart_products.length ? (
+            cart_products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                setLoading={setLoading}
+              />
+            ))
+          ) : (
+            <p>Không có sản phẩm nào trong giỏ hàng của bạn!</p>
+          )}
         </div>
       </ComponentSpinner>
     </SlideModal>

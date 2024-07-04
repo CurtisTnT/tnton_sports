@@ -7,15 +7,15 @@ import { Product } from "@/services/interface";
 import { formatVndCurrency } from "@/utils/helpers";
 import { shoesSizes } from "@/constants/shoesSize";
 import { clothesSizes } from "@/constants/clothesSize";
-import { updateUser } from "@/services/userAction";
 import { useStore } from "@/context/Store";
 
 type Props = {
   product: Product;
+  onRemoveProduct: (product: Product) => void;
 };
 
 export default function ProductCard(props: Props) {
-  const { product } = props;
+  const { product, onRemoveProduct } = props;
   const {
     id,
     image_url,
@@ -30,10 +30,7 @@ export default function ProductCard(props: Props) {
     selectedSize,
   } = product;
 
-  const {
-    appState: { user },
-    setAppState,
-  } = useStore();
+  const { setAppState } = useStore();
 
   const [selectedAttributes, setSelectedAttributes] = useState<{
     size: string;
@@ -55,23 +52,6 @@ export default function ProductCard(props: Props) {
       url = product_type!;
       break;
   }
-
-  const handleRemoveProductFromCart = async () => {
-    const isDelete = confirm(
-      `Bạn có muốn xoá ${product.name} ra khỏi giỏ hàng của bạn!`
-    );
-
-    if (!isDelete) return;
-
-    const res = await updateUser({
-      ...user,
-      cart_products: user.cart_products.filter((prod) => prod.id !== id),
-    });
-
-    if (res) {
-      setAppState((prev) => ({ ...prev, user: res }));
-    }
-  };
 
   const renderSelectSize = (opts: {
     initItems: { type: string; label: string }[];
@@ -200,7 +180,7 @@ export default function ProductCard(props: Props) {
       <button
         type="button"
         className="absolute bottom-2 right-2 text-red-500"
-        onClick={handleRemoveProductFromCart}
+        onClick={() => onRemoveProduct(product)}
       >
         <BsTrash size={18} />
       </button>

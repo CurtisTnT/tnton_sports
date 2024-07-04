@@ -11,7 +11,7 @@ import { formatVndCurrency } from "@/utils/helpers";
 import { clothesSizes } from "@/constants/clothesSize";
 import { shoesSizes } from "@/constants/shoesSize";
 import { useStore } from "@/context/Store";
-import BuyNowButton from "@/components/buttons/BuyNowButton";
+// import BuyNowButton from "@/components/buttons/BuyNowButton";
 import AddToCartButton from "@/components/buttons/AddToCartButton";
 import AddToFavoriteButton from "@/components/buttons/AddToFavoriteButton";
 import AddToCartSuccessModal from "./AddToCartSuccessModal";
@@ -336,7 +336,7 @@ export default function DetailProductModal(props: Props) {
               </div>
 
               <div className="flex gap-2">
-                <BuyNowButton onClick={() => {}} />
+                {/* <BuyNowButton onClick={() => {}} /> */}
                 <AddToCartButton onClick={handleAddToCart} />
                 <AddToFavoriteButton onClick={handleAddProductToFavorite} />
               </div>

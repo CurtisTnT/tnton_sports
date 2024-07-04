@@ -108,6 +108,7 @@ export default function Header() {
           label: "Đăng xuất",
           onClick: () => {
             setAppState((prev) => ({ ...prev, user: initialUser }));
+            Toast({ type: "success", message: "Đăng xuất thành công!" });
           },
           icon: <IoIosLogOut size={18} />,
         },
@@ -118,7 +119,6 @@ export default function Header() {
           label: "Đăng nhập",
           onClick: () => {
             navigate("/sign-in");
-            Toast({ type: "success", message: "Đăng xuất thành công!" });
           },
           icon: <IoIosLogIn size={18} />,
         },

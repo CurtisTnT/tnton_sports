@@ -36,13 +36,17 @@ export default function FavoriteProductsModal() {
     >
       <ComponentSpinner isLoading={loading}>
         <div className="space-y-2 overflow-y-scroll h-[calc(100vh-108px)] scrollbar-hide">
-          {favorite_products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              setLoading={setLoading}
-            />
-          ))}
+          {favorite_products.length ? (
+            favorite_products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                setLoading={setLoading}
+              />
+            ))
+          ) : (
+            <p>Không có sản phẩm này trong danh mục yêu thích của bạn!</p>
+          )}
         </div>
       </ComponentSpinner>
     </SlideModal>

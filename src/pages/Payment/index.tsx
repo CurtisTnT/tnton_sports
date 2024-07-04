@@ -9,6 +9,8 @@ import ProductCard from "./ProductCard";
 import { formatVndCurrency } from "@/utils/helpers";
 import ComponentSpinner from "@/components/loading/ComponentSpinner";
 import Toast from "@/components/Toast";
+import { updateUser } from "@/services/userAction";
+import { Product } from "@/services/interface";
 
 const PAYMENT_METHOD_ITEMS = [
   { id: 1, label: "Chuyển khoản qua ngân hàng", value: "banking" },
@@ -46,7 +48,10 @@ export default function Payment() {
     email: "",
     phoneNumber: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<{ product: boolean; info: boolean }>({
+    product: false,
+    info: false,
+  });
 
   const totalPrice = cart_products.reduce(
     (acc, { price }) => (acc += price),
@@ -58,22 +63,46 @@ export default function Payment() {
     setFormValues((prev) => ({ ...prev, ...values }));
   };
 
-  const handleOrder = () => {
-    setLoading(true);
+  const handleRemoveProductFromCart = async (product: Product) => {
+    const isDelete = confirm(
+      `Bạn có muốn xoá ${product.name} ra khỏi giỏ hàng của bạn!`
+    );
 
-    setTimeout(() => {
-      setAppState((prev) => ({
-        ...prev,
-        user: { ...prev.user, cart_products: [] },
-      }));
-      navigate("/");
-      Toast({
-        type: "success",
-        message:
-          "Đặt hàng thành công. Nhân viên TnTon sẽ liên hệ với bạn trong giây lát để xác nhận đơn hàng. TnTon xin chân thành cảm ơn!",
+    if (!isDelete) return;
+
+    setLoading({ ...loading, product: true });
+
+    (async () => {
+      const res = await updateUser({
+        ...user,
+        cart_products: user.cart_products.filter(
+          (prod) => prod.id !== product.id
+        ),
       });
-      setLoading(false);
-    }, 3000);
+
+      if (res) {
+        setAppState((prev) => ({ ...prev, user: res }));
+        setLoading({ ...loading, product: false });
+      }
+    })();
+  };
+
+  const handleOrder = () => {
+    setLoading({ ...loading, info: true });
+
+    (async () => {
+      const res = await updateUser({ ...user, cart_products: [] });
+      if (res) {
+        setAppState((prev) => ({ ...prev, user: res }));
+        navigate("/");
+        Toast({
+          type: "success",
+          message:
+            "Đặt hàng thành công. Nhân viên TnTon sẽ liên hệ với bạn trong giây lát để xác nhận đơn hàng. TnTon xin chân thành cảm ơn!",
+        });
+        setLoading({ ...loading, info: false });
+      }
+    })();
   };
 
   useEffect(() => {
@@ -106,14 +135,24 @@ export default function Payment() {
               </span>
             </h3>
 
-            <div className="space-y-2">
-              {cart_products.map((prod) => (
-                <ProductCard key={prod.id} product={prod} />
-              ))}
-            </div>
+            <ComponentSpinner isLoading={loading.product}>
+              <div className="space-y-2">
+                {cart_products.length ? (
+                  cart_products.map((prod) => (
+                    <ProductCard
+                      key={prod.id}
+                      product={prod}
+                      onRemoveProduct={handleRemoveProductFromCart}
+                    />
+                  ))
+                ) : (
+                  <p>Không có sản phẩm nào trong giỏ hàng của bạn!</p>
+                )}
+              </div>
+            </ComponentSpinner>
           </div>
 
-          <ComponentSpinner isLoading={loading}>
+          <ComponentSpinner isLoading={loading.info}>
             <form className="flex-grow">
               <div>
                 <h3 className="uppercase font-bold mb-3">
@@ -273,7 +312,8 @@ export default function Payment() {
                   !formValues.email ||
                   !formValues.phoneNumber ||
                   !formValues.address ||
-                  !formValues.paymentMethod
+                  !formValues.paymentMethod ||
+                  !cart_products.length
                 }
               >
                 Đặt hàng

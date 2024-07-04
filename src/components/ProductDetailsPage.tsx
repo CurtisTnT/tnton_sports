@@ -17,7 +17,7 @@ import { Store } from "@/constants/store";
 import StoreList from "./StoreList";
 import Modal, { ModalRef } from "./modals/Modal";
 import AddToCartButton from "./buttons/AddToCartButton";
-import BuyNowButton from "./buttons/BuyNowButton";
+// import BuyNowButton from "./buttons/BuyNowButton";
 import AddToFavoriteButton from "./buttons/AddToFavoriteButton";
 import { useStore } from "@/context/Store";
 import AddToCartSuccessModal from "./modals/AddToCartSuccessModal";
@@ -457,7 +457,7 @@ export default function ProductDetailsPage(props: Props) {
           </div>
 
           <div className="flex gap-2">
-            <BuyNowButton onClick={() => {}} />
+            {/* <BuyNowButton onClick={() => {}} /> */}
             <AddToCartButton onClick={handleAddToCart} />
             <AddToFavoriteButton onClick={handleAddProductToFavorite} />
           </div>

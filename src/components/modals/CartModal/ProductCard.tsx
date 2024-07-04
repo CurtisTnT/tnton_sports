@@ -73,7 +73,7 @@ export default function ProductCard(props: Props) {
 
       if (res) {
         setAppState((prev) => ({ ...prev, user: res }));
-        setLoading(true);
+        setLoading(false);
       }
     })();
   };

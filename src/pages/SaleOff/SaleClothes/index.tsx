@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import ContentContainer from "@/components/layouts/ContentContainer";
 import { Brand, BrandType, brands } from "@/constants/brand";
@@ -37,6 +38,9 @@ type Filters = {
 } & Pick<ProductParams, "sortBy" | "order">;
 
 export default function SaleClothes() {
+  const [searchParams] = useSearchParams();
+  const productTypeQuery = searchParams.get("product_type");
+
   const [filters, setFilters] = useState<Filters>({
     page: 1,
     limit: 9,
@@ -91,6 +95,13 @@ export default function SaleClothes() {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (productTypeQuery) {
+      handleFilters({ product_type: [productTypeQuery as ProductTypeType] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productTypeQuery]);
 
   return (
     <ContentContainer>

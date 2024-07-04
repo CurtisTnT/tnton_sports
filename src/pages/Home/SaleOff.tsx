@@ -21,7 +21,7 @@ export default function SaleOff() {
     {
       id: 3,
       imageUrl: item3,
-      to: "/sale-off/clothes",
+      to: "/sale-off/clothes?product_type=shirt",
     },
   ];
 
