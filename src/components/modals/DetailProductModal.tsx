@@ -1,4 +1,4 @@
-import { Ref, useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useState } from "react";
 import clsx from "clsx";
 import { TfiClose } from "react-icons/tfi";
 import { MdLabel } from "react-icons/md";
@@ -14,8 +14,6 @@ import { useStore } from "@/context/Store";
 // import BuyNowButton from "@/components/buttons/BuyNowButton";
 import AddToCartButton from "@/components/buttons/AddToCartButton";
 import AddToFavoriteButton from "@/components/buttons/AddToFavoriteButton";
-import AddToCartSuccessModal from "./AddToCartSuccessModal";
-import AddToCartUnsuccessModal from "./AddToCartUnsuccessModal";
 import Toast from "@/components/Toast";
 import { updateUser } from "@/services/userAction";
 
@@ -55,9 +53,6 @@ export default function DetailProductModal(props: Props) {
   }>({ size: "", quantity: 1 });
   const [error, setError] = useState("");
 
-  const addToCartSuccessModalRef = useRef<ModalRef>(null);
-  const addToCartUnsuccessModalRef = useRef<ModalRef>(null);
-
   const resetState = () => {
     setSelectedAttributes({ size: "", quantity: 1 });
     setError("");
@@ -90,7 +85,6 @@ export default function DetailProductModal(props: Props) {
         message:
           "Sản phẩm này đang có trong giỏ hàng của bạn. Vui lòng chọn size hoặc sản phẩm khác!",
       });
-      // addToCartUnsuccessModalRef.current?.open();
     } else {
       const res = await updateUser({
         ...user,
@@ -115,6 +109,7 @@ export default function DetailProductModal(props: Props) {
           type: "success",
           message: "Thêm sản phẩm vào giỏ hàng thành công!",
         });
+        resetState();
         onClose();
       }
     }
@@ -163,6 +158,7 @@ export default function DetailProductModal(props: Props) {
           type: "success",
           message: "Thêm sản phẩm vào danh mục yêu thích thành công!",
         });
+        resetState();
         onClose();
       }
     }
@@ -213,174 +209,156 @@ export default function DetailProductModal(props: Props) {
   );
 
   return (
-    <>
-      <Modal ref={detailProductModalRef} size="lg" onClose={resetState}>
-        <div className="relative p-7 px-5">
-          <div className="flex gap-4">
-            <div className="relative w-[350px] h-[350px] flex items-center rounded-xl shadow-[0px_0px_10px_1px_rgb(0,0,0,0.3)] shrink-0 overflow-hidden">
-              <img
-                src={previewImg}
-                alt="preview-image"
-                width={400}
-                height={400}
-                className="object-cover"
-              />
+    <Modal ref={detailProductModalRef} size="lg" onClose={resetState}>
+      <div className="relative p-7 px-5">
+        <div className="flex gap-4">
+          <div className="relative w-[350px] h-[350px] flex items-center rounded-xl shadow-[0px_0px_10px_1px_rgb(0,0,0,0.3)] shrink-0 overflow-hidden">
+            <img
+              src={previewImg}
+              alt="preview-image"
+              width={400}
+              height={400}
+              className="object-cover"
+            />
 
-              {!!discount_percent && (
-                <div className="absolute top-0 right-0">
-                  <div className="relative">
-                    <MdLabel size={45} className="rotate-180 text-red-600" />
-                    <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-white font-semibold">
-                      {discount_percent}%
-                    </p>
-                  </div>
+            {!!discount_percent && (
+              <div className="absolute top-0 right-0">
+                <div className="relative">
+                  <MdLabel size={45} className="rotate-180 text-red-600" />
+                  <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-white font-semibold">
+                    {discount_percent}%
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col justify-between">
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold">{name}</h3>
+
+              <div className="flex gap-5 text-sm">
+                <p>
+                  Thương hiệu:{" "}
+                  <span className="font-semibold text-pink">
+                    {brand && Brand[brand].label}
+                  </span>{" "}
+                </p>
+                <p>
+                  Tình trạng:{" "}
+                  <span className="font-semibold text-pink">
+                    {stores.length ? "Còn hàng" : "Hết hàng"}
+                  </span>
+                </p>
+              </div>
+
+              <p className="text-2xl font-bold text-pink">
+                {formatVndCurrency(price)}{" "}
+                {!!init_price && (
+                  <span className="text-sm font-normal text-gray-400">
+                    Giá niêm yết:{" "}
+                    <span className="line-through">
+                      {formatVndCurrency(init_price)}
+                    </span>
+                  </span>
+                )}
+              </p>
+
+              {product_type !== "racket" && (
+                <div className="space-y-1 !mb-4">
+                  <h3>Chọn size:</h3>
+                  {clothes_sizes &&
+                    renderSelectedSize({
+                      initItems: clothesSizes,
+                      curItems: clothes_sizes,
+                    })}
+
+                  {shoes_size &&
+                    renderSelectedSize({
+                      initItems: shoesSizes,
+                      curItems: shoes_size,
+                    })}
+
+                  <p
+                    className={clsx("text-red-500 text-xs h-4", {
+                      invisible: !error,
+                    })}
+                  >
+                    {error}
+                  </p>
                 </div>
               )}
-            </div>
 
-            <div className="flex flex-col justify-between">
-              <div className="space-y-2">
-                <h3 className="text-2xl font-bold">{name}</h3>
-
-                <div className="flex gap-5 text-sm">
-                  <p>
-                    Thương hiệu:{" "}
-                    <span className="font-semibold text-pink">
-                      {brand && Brand[brand].label}
-                    </span>{" "}
-                  </p>
-                  <p>
-                    Tình trạng:{" "}
-                    <span className="font-semibold text-pink">
-                      {stores.length ? "Còn hàng" : "Hết hàng"}
-                    </span>
-                  </p>
-                </div>
-
-                <p className="text-2xl font-bold text-pink">
-                  {formatVndCurrency(price)}{" "}
-                  {!!init_price && (
-                    <span className="text-sm font-normal text-gray-400">
-                      Giá niêm yết:{" "}
-                      <span className="line-through">
-                        {formatVndCurrency(init_price)}
-                      </span>
-                    </span>
-                  )}
-                </p>
-
-                {product_type !== "racket" && (
-                  <div className="space-y-1 !mb-4">
-                    <h3>Chọn size:</h3>
-                    {clothes_sizes &&
-                      renderSelectedSize({
-                        initItems: clothesSizes,
-                        curItems: clothes_sizes,
-                      })}
-
-                    {shoes_size &&
-                      renderSelectedSize({
-                        initItems: shoesSizes,
-                        curItems: shoes_size,
-                      })}
-
-                    <p
-                      className={clsx("text-red-500 text-xs h-4", {
-                        invisible: !error,
-                      })}
-                    >
-                      {error}
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="w-6 h-6 flex justify-center items-center bg-pink rounded-[12px] text-white disabled:opacity-80"
-                    onClick={() =>
-                      setSelectedAttributes((prev) => ({
-                        ...prev,
-                        quantity: prev.quantity - 1,
-                      }))
-                    }
-                    disabled={selectedAttributes.quantity <= 1}
-                  >
-                    <span className="-translate-y-px">-</span>
-                  </button>
-                  <input
-                    type="number"
-                    min={1}
-                    className="hide-up-down-input text-center border border-pink rounded w-20"
-                    value={selectedAttributes.quantity}
-                    onChange={(e) =>
-                      setSelectedAttributes((prev) => ({
-                        ...prev,
-                        quantity: Number(e.target.value),
-                      }))
-                    }
-                  />
-                  <button
-                    type="button"
-                    className="w-6 h-6 flex justify-center items-center bg-pink rounded-[12px] text-white"
-                    onClick={() =>
-                      setSelectedAttributes((prev) => ({
-                        ...prev,
-                        quantity: prev.quantity + 1,
-                      }))
-                    }
-                  >
-                    <span className="-translate-y-px">+</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                {/* <BuyNowButton onClick={() => {}} /> */}
-                <AddToCartButton onClick={handleAddToCart} />
-                <AddToFavoriteButton onClick={handleAddProductToFavorite} />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 mt-4">
-            {image_url.map((src) => {
-              const isSelected = src === previewImg;
-              return (
+              <div className="flex items-center gap-2">
                 <button
-                  key={src}
                   type="button"
-                  className={clsx(
-                    "w-[65px] h-[85px] flex items-center border rounded",
-                    {
-                      "border-pink": isSelected,
-                    }
-                  )}
-                  onClick={() => setPreviewImg(src)}
+                  className="w-6 h-6 flex justify-center items-center bg-pink rounded-[12px] text-white disabled:opacity-80"
+                  onClick={() =>
+                    setSelectedAttributes((prev) => ({
+                      ...prev,
+                      quantity: prev.quantity - 1,
+                    }))
+                  }
+                  disabled={selectedAttributes.quantity <= 1}
                 >
-                  <img src={src} alt="preview-image" width={65} />
+                  <span className="-translate-y-px">-</span>
                 </button>
-              );
-            })}
+                <input
+                  type="number"
+                  min={1}
+                  className="hide-up-down-input text-center border border-pink rounded w-20"
+                  value={selectedAttributes.quantity}
+                  onChange={(e) =>
+                    setSelectedAttributes((prev) => ({
+                      ...prev,
+                      quantity: Number(e.target.value),
+                    }))
+                  }
+                />
+                <button
+                  type="button"
+                  className="w-6 h-6 flex justify-center items-center bg-pink rounded-[12px] text-white"
+                  onClick={() =>
+                    setSelectedAttributes((prev) => ({
+                      ...prev,
+                      quantity: prev.quantity + 1,
+                    }))
+                  }
+                >
+                  <span className="-translate-y-px">+</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              {/* <BuyNowButton onClick={() => {}} /> */}
+              <AddToCartButton onClick={handleAddToCart} />
+              <AddToFavoriteButton onClick={handleAddProductToFavorite} />
+            </div>
           </div>
         </div>
-      </Modal>
 
-      <AddToCartSuccessModal
-        addToCartSuccessModalRef={addToCartSuccessModalRef}
-        product={selectedProduct}
-        selectedAttributes={selectedAttributes}
-        onClose={() => {
-          resetState();
-          addToCartSuccessModalRef.current?.close();
-          onClose();
-        }}
-      />
-
-      <AddToCartUnsuccessModal
-        addToCartUnsuccessModalRef={addToCartUnsuccessModalRef}
-        onClose={() => addToCartUnsuccessModalRef.current?.close()}
-      />
-    </>
+        <div className="flex gap-2 mt-4">
+          {image_url.map((src) => {
+            const isSelected = src === previewImg;
+            return (
+              <button
+                key={src}
+                type="button"
+                className={clsx(
+                  "w-[65px] h-[85px] flex items-center border rounded",
+                  {
+                    "border-pink": isSelected,
+                  }
+                )}
+                onClick={() => setPreviewImg(src)}
+              >
+                <img src={src} alt="preview-image" width={65} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </Modal>
   );
 }

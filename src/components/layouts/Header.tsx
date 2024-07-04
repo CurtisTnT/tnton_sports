@@ -12,6 +12,7 @@ import { MdPhoneInTalk } from "react-icons/md";
 import { IoIosLogIn } from "react-icons/io";
 import { IoIosLogOut } from "react-icons/io";
 import { FiUserPlus } from "react-icons/fi";
+import clsx from "clsx";
 
 import shopName from "@/assets/images/shopName.png";
 import { useStore } from "@/context/Store";
@@ -319,7 +320,10 @@ export default function Header() {
             <div className="flex gap-2 px-4">
               <button
                 type="button"
-                className="relative p-2 border rounded-3xl hover:text-pink"
+                className={clsx(
+                  "relative p-2 border rounded-3xl hover:text-pink",
+                  { "border-pink": !!id }
+                )}
                 onClick={() => {
                   if (id) {
                     setAppState((prev) => ({
@@ -343,7 +347,10 @@ export default function Header() {
 
               <button
                 type="button"
-                className="relative p-2 border rounded-3xl hover:text-pink"
+                className={clsx(
+                  "relative p-2 border rounded-3xl hover:text-pink",
+                  { "border-pink": !!id }
+                )}
                 onClick={() => {
                   if (id) {
                     setAppState((prev) => ({
@@ -365,7 +372,12 @@ export default function Header() {
                 <PiShoppingCartSimpleBold size={25} className="shrink-0" />
               </button>
 
-              <span className="relative p-2 border rounded-3xl hover:text-pink group">
+              <span
+                className={clsx(
+                  "relative p-2 border rounded-3xl hover:text-pink group",
+                  { "border-pink": !!id }
+                )}
+              >
                 <FaRegUser size={25} className="shrink-0" />
 
                 <div className="absolute top-10 right-0 hidden group-hover:flex flex-col bg-white rounded shadow-[0px_0px_10px_1px_rgb(0,0,0,0.1)] overflow-hidden text-nowrap">

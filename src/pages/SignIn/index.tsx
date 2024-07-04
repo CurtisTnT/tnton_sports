@@ -63,7 +63,13 @@ export default function SignIn() {
             Đăng nhập
           </h1>
 
-          <div className="flex flex-col text-sm">
+          <form
+            className="flex flex-col text-sm"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSignIn();
+            }}
+          >
             <div className="w-[300px]">
               <input
                 type="text"
@@ -105,10 +111,9 @@ export default function SignIn() {
             </div>
 
             <button
-              type="button"
+              type="submit"
               className="mt-4 mb-2 py-2 px-5 bg-pink border border-pink rounded-lg text-sm text-white font-semibold hover:text-pink hover:bg-white disabled:opacity-50 disabled:hover:text-white disabled:hover:bg-pink"
               disabled={!formData.email || !formData.password}
-              onClick={handleSignIn}
             >
               Đăng nhập
             </button>
@@ -119,7 +124,7 @@ export default function SignIn() {
             >
               Đăng ký tại đây
             </Link>
-          </div>
+          </form>
         </div>
       </ComponentSpinner>
     </div>

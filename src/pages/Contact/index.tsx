@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import emailjs from "emailjs-com";
 
 import ContentContainer from "@/components/layouts/ContentContainer";
 import ComponentSpinner from "@/components/loading/ComponentSpinner";
+import { useStore } from "@/context/Store";
 
 type FormData = {
   name: string;
@@ -13,6 +14,10 @@ type FormData = {
 };
 
 export default function Contact() {
+  const {
+    appState: { user },
+  } = useStore();
+
   const initialFormData: FormData = {
     name: "",
     phone: "",
@@ -50,13 +55,27 @@ export default function Contact() {
       });
   };
 
+  useEffect(() => {
+    if (user.id) {
+      const { name, email, phone_number } = user;
+      handleChangeFormData({ name, email, phone: phone_number });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user.id]);
+
   return (
     <ContentContainer>
       <div className="flex flex-col mt-10 items-center">
         <ComponentSpinner isLoading={loading}>
           <h1 className="text-xl uppercase font-bold">Liên hệ với chúng tôi</h1>
 
-          <div className="my-5 flex flex-col text-sm">
+          <form
+            className="my-5 flex flex-col text-sm"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmitEmail();
+            }}
+          >
             <input
               type="text"
               className="w-full mb-4 px-4 py-2 border rounded-lg"
@@ -117,7 +136,6 @@ export default function Contact() {
             <button
               type="submit"
               className="self-center py-2 px-5 rounded bg-pink text-white font-bold hover:scale-110 duration-300 disabled:opacity-50 disabled:hover:text-white disabled:hover:bg-pink"
-              onClick={handleSubmitEmail}
               disabled={
                 !formData.content ||
                 !formData.email ||
@@ -127,7 +145,7 @@ export default function Contact() {
             >
               Gửi thông tin
             </button>
-          </div>
+          </form>
         </ComponentSpinner>
       </div>
     </ContentContainer>

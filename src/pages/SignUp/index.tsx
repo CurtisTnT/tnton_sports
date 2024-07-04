@@ -90,7 +90,13 @@ export default function SignUp() {
             .
           </p>
 
-          <div className="flex flex-col text-sm">
+          <form
+            className="flex flex-col text-sm"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSignUp();
+            }}
+          >
             <input
               type="text"
               className="w-[300px] mb-4 px-4 py-2 border rounded-lg"
@@ -168,7 +174,7 @@ export default function SignUp() {
             </div>
 
             <button
-              type="button"
+              type="submit"
               className="mt-4 py-2 px-5 bg-pink border border-pink rounded-lg text-sm text-white font-semibold hover:text-pink hover:bg-white disabled:opacity-50 disabled:hover:text-white disabled:hover:bg-pink"
               disabled={
                 !formData.name ||
@@ -177,11 +183,10 @@ export default function SignUp() {
                 !formData.password ||
                 !formData.passwordConfirmation
               }
-              onClick={handleSignUp}
             >
               Đăng kí
             </button>
-          </div>
+          </form>
         </div>
       </ComponentSpinner>
     </div>

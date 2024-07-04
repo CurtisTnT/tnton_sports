@@ -108,12 +108,7 @@ export default function Payment() {
   useEffect(() => {
     if (user.id) {
       const { name, email, phone_number } = user;
-      setFormValues((prev) => ({
-        ...prev,
-        name,
-        email,
-        phoneNumber: phone_number,
-      }));
+      handleChangeFormValues({ name, email, phoneNumber: phone_number });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.id]);
